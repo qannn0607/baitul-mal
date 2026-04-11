@@ -39,7 +39,13 @@
 
         .pattern-bg {
             background-color:#0e4b34;
-            background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9992c' fill-opacity='0.08'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z'/%3E%3Cpath d='M30 10L50 30L30 50L10 30Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-bg {
+            background: linear-gradient(to bottom, rgba(14, 75, 52, 0.9) 0%, rgba(14, 75, 52, 0.7) 50%, rgba(14, 75, 52, 0.3) 100%), url('/img/masjid1.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         .pattern-light {
             background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23229668' fill-opacity='0.05'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z'/%3E%3C/g%3E%3C/svg%3E");
@@ -190,7 +196,7 @@
 
 
 {{-- ===== HERO ===== --}}
-<section class="pattern-bg min-h-screen flex items-center relative overflow-hidden">
+<section class="hero-bg min-h-screen flex items-center relative overflow-hidden">
     <div class="absolute -top-20 -right-20 w-64 sm:w-96 h-64 sm:h-96 rounded-full border border-emas-500/10 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-56 h-56 rounded-full bg-hijau-700/30 blur-3xl pointer-events-none"></div>
 
