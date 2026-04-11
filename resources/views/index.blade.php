@@ -143,13 +143,8 @@
         <div class="flex items-center justify-between h-16">
             {{-- Logo --}}
             <a href="/" class="flex items-center gap-2.5 flex-shrink-0 min-h-0">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-emas-400 flex items-center justify-center flex-shrink-0">
-                    <svg viewBox="0 0 44 44" fill="none" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 4C22 4 8 14 8 24C8 31.7 14.3 38 22 38C29.7 38 36 31.7 36 24C36 14 22 4 22 4Z" fill="#0e4b34"/>
-                        <path d="M22 10C22 10 12 18 12 25C12 30.5 16.5 35 22 35C27.5 35 32 30.5 32 25C32 18 22 10 22 10Z" fill="#229668"/>
-                        <path d="M22 17C22 17 16 22 16 26.5C16 29.5 18.7 32 22 32C25.3 32 28 29.5 28 26.5C28 22 22 17 22 17Z" fill="#c9992c"/>
-                        <circle cx="22" cy="26" r="3" fill="#f5d88a"/>
-                    </svg>
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0">
+                    <img src="/img/logo-baitulmal.png" alt="Logo Baitul Mal" class="w-50">
                 </div>
                 <div>
                     <p class="text-white font-lato font-bold text-xs sm:text-sm leading-tight">Baitul Mal</p>
@@ -242,36 +237,7 @@
 
             {{-- Masjid Illustration (desktop only) --}}
             <div class="hidden lg:flex justify-center items-center fade-in" style="animation-delay:.2s">
-                <div class="relative w-80 xl:w-96 h-80 xl:h-96">
-                    <div class="absolute inset-0 rounded-full border-2 border-emas-500/30 animate-spin" style="animation-duration:20s"></div>
-                    <div class="absolute inset-8 rounded-full bg-hijau-700/40 backdrop-blur flex items-center justify-center">
-                        <div class="text-center">
-                            <svg viewBox="0 0 160 160" class="w-36 xl:w-40 h-36 xl:h-40 mx-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <ellipse cx="80" cy="95" rx="55" ry="50" fill="#167a54" stroke="#c9992c" stroke-width="1.5"/>
-                                <path d="M30 95 Q30 55 80 45 Q130 55 130 95" fill="#229668" stroke="#c9992c" stroke-width="1.5"/>
-                                <rect x="18" y="70" width="16" height="50" rx="3" fill="#229668" stroke="#c9992c" stroke-width="1"/>
-                                <path d="M18 70 Q26 55 34 70" fill="#125f42" stroke="#c9992c" stroke-width="1"/>
-                                <circle cx="26" cy="53" r="4" fill="#c9992c"/>
-                                <rect x="126" y="70" width="16" height="50" rx="3" fill="#229668" stroke="#c9992c" stroke-width="1"/>
-                                <path d="M126 70 Q134 55 142 70" fill="#125f42" stroke="#c9992c" stroke-width="1"/>
-                                <circle cx="134" cy="53" r="4" fill="#c9992c"/>
-                                <rect x="66" y="100" width="28" height="45" rx="14" fill="#0e4b34" stroke="#c9992c" stroke-width="1.5"/>
-                                <ellipse cx="56" cy="85" rx="9" ry="12" fill="#0e4b34" stroke="#c9992c" stroke-width="1"/>
-                                <ellipse cx="104" cy="85" rx="9" ry="12" fill="#0e4b34" stroke="#c9992c" stroke-width="1"/>
-                                <path d="M80 30 C74 25 68 32 74 38 C68 38 64 32 70 27 C73 24 77 23 80 25 Z" fill="#c9992c"/>
-                                <circle cx="80" cy="20" r="7" fill="none" stroke="#c9992c" stroke-width="1.5"/>
-                                <path d="M44 38 L45.5 42.5 L50 44 L45.5 45.5 L44 50 L42.5 45.5 L38 44 L42.5 42.5 Z" fill="#f5d88a" opacity=".7"/>
-                                <path d="M116 38 L117.5 42.5 L122 44 L117.5 45.5 L116 50 L114.5 45.5 L110 44 L114.5 42.5 Z" fill="#f5d88a" opacity=".7"/>
-                                <rect x="25" y="140" width="110" height="6" rx="3" fill="#c9992c" opacity=".5"/>
-                            </svg>
-                            <p class="text-emas-300 font-amiri text-lg mt-2">بَيْتُ الْمَالِ</p>
-                            <p class="text-white/60 font-lato text-xs mt-1">Kota Banda Aceh</p>
-                        </div>
-                    </div>
-                    <div class="absolute inset-0 animate-spin" style="animation-duration:15s">
-                        <div class="absolute top-4 left-1/2 w-3 h-3 bg-emas-400 rounded-full -translate-x-1/2"></div>
-                    </div>
-                </div>
+                <img src="/img/logo-baitulmal.png" alt="Logo Baitul Mal" class="w-[400px] translate-x-40"> 
             </div>
         </div>
     </div>
