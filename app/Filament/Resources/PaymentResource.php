@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PaymentResource\Pages;
 use App\Models\Payment;
+use App\Services\AuditService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -13,6 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentResource extends Resource
 {
@@ -46,7 +48,7 @@ class PaymentResource extends Resource
                         'Zakat Maal' => 'Zakat Maal',
                         'Zakat Penghasilan' => 'Zakat Penghasilan',
                         'Zakat Fitrah' => 'Zakat Fitrah',
-                        'Donasi / Infaq' => 'Donasi / Infaq',
+                        'Infaq / Sedekah' => 'Infaq / Sedekah',
                     ])
                     ->required()
                     ->label('Peruntukan Zakat'),
@@ -67,6 +69,11 @@ class PaymentResource extends Resource
                     ->default('Menunggu Verifikasi')
                     ->required()
                     ->label('Status Pembayaran'),
+
+                Forms\Components\Textarea::make('rejection_reason')
+                    ->label('Alasan Penolakan (Jika Status Ditolak)')
+                    ->visible(fn (Forms\Get $get) => $get('status') === 'Ditolak')
+                    ->columnSpanFull(),
 
                 Forms\Components\FileUpload::make('proof_image')
                     ->image()
@@ -133,30 +140,78 @@ class PaymentResource extends Resource
                     ->label('Filter Status'),
             ])
             ->actions([
-                // Tombol aksi Cepat Verifikasi
+                // Tombol Verifikasi
                 Action::make('verify')
                     ->label('Verifikasi')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Payment $record): bool => $record->status === 'Menunggu Verifikasi')
                     ->action(function (Payment $record) {
+                        $oldValues = $record->toArray();
                         $record->update([
                             'status' => 'Diverifikasi',
+                            'verified_by' => Auth::id(),
                             'verified_at' => now(),
                         ]);
+
+                        AuditService::log(
+                            'Verifikasi Pembayaran',
+                            'Memverifikasi pembayaran #' . $record->id . ' sebesar Rp ' . number_format($record->amount, 0, ',', '.'),
+                            $record,
+                            $oldValues,
+                            $record->toArray()
+                        );
                     }),
 
-                // Tombol aksi Cepat "Zakat Disalurkan" (Permintaan Spesifik User)
+                // Tombol Tolak dengan Modal Alasan
+                Action::make('reject')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (Payment $record): bool => $record->status === 'Menunggu Verifikasi')
+                    ->form([
+                        Forms\Components\Textarea::make('rejection_reason')
+                            ->label('Alasan Penolakan')
+                            ->required()
+                            ->placeholder('Contoh: Bukti transfer tidak jelas atau nominal tidak sesuai.'),
+                    ])
+                    ->action(function (Payment $record, array $data) {
+                        $oldValues = $record->toArray();
+                        $record->update([
+                            'status' => 'Ditolak',
+                            'rejection_reason' => $data['rejection_reason'],
+                            'verified_by' => Auth::id(),
+                        ]);
+
+                        AuditService::log(
+                            'Penolakan Pembayaran',
+                            'Menolak pembayaran #' . $record->id . '. Alasan: ' . $data['rejection_reason'],
+                            $record,
+                            $oldValues,
+                            $record->toArray()
+                        );
+                    }),
+
+                // Tombol Zakat Disalurkan
                 Action::make('distribute')
-                    ->label('Zakat Disalurkan')
+                    ->label('Disalurkan')
                     ->icon('heroicon-o-paper-airplane')
                     ->color('info')
                     ->visible(fn (Payment $record): bool => in_array($record->status, ['Diverifikasi', 'Menunggu Verifikasi']))
                     ->action(function (Payment $record) {
+                        $oldValues = $record->toArray();
                         $record->update([
                             'status' => 'Sudah Disalurkan',
                             'distributed_at' => now(),
                         ]);
+
+                        AuditService::log(
+                            'Penyaluran Zakat',
+                            'Zakat #' . $record->id . ' telah disalurkan kepada Mustahik.',
+                            $record,
+                            $oldValues,
+                            $record->toArray()
+                        );
                     }),
 
                 EditAction::make(),

@@ -46,23 +46,43 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Check if user is an administrator.
+     * Role Helpers
      */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
+    public function isPetugas(): bool
+    {
+        return $this->role === 'petugas';
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === 'user' || empty($this->role);
+    }
+
+    public function isAdminOrPetugas(): bool
+    {
+        return in_array($this->role, ['admin', 'petugas']);
+    }
+
     /**
-     * Determine if the user can access the Filament panel.
+     * Access control for Filament Admin Panel.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin();
+        return $this->isAdminOrPetugas();
     }
 
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
     }
 }

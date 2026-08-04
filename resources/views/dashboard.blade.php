@@ -1,152 +1,152 @@
+<?php
+    $setting = \App\Models\Setting::first();
+    $user = Auth::user();
+    $payments = $user->payments()->latest()->get();
+    $totalAmount = $payments->whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])->sum('amount');
+    $lastPayment = $payments->first();
+?>
+
 <x-app-layout>
     <div class="space-y-6">
-        <!-- Header Welcome -->
-        <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-            <div class="relative z-10">
-                <span class="px-3 py-1 bg-emerald-700/60 backdrop-blur-sm text-emerald-200 text-xs font-semibold rounded-full uppercase tracking-wider">Dashboard Muzakki</span>
-                <h1 class="text-2xl sm:text-3xl font-extrabold mt-2">Assalamu'alaikum, {{ Auth::user()->name }} 👋</h1>
-                <p class="text-emerald-100 text-sm mt-1 max-w-xl">Selamat datang di Portal Digital Baitul Maal. Kelola zakat, infaq, dan donasi Anda secara akurat, mudah, dan transparan.</p>
-                
-                <div class="mt-6 flex flex-wrap items-center gap-3">
-                    <a href="{{ route('zakat.pay') }}" class="px-5 py-2.5 bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-bold rounded-xl shadow-lg hover:shadow-emerald-400/30 transition-all flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Bayar Zakat Sekarang
-                    </a>
-                    <a href="{{ route('zakat.calculator') }}" class="px-5 py-2.5 bg-emerald-900/60 hover:bg-emerald-800/80 text-white font-semibold rounded-xl border border-emerald-700/60 transition-all flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                        Hitung Nisab Zakat
-                    </a>
-                </div>
+        
+        <!-- HEADER WELCOME -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900 text-white p-6 rounded-xl border border-slate-800 shadow-xs">
+            <div class="space-y-1">
+                <span class="px-2.5 py-0.5 bg-emerald-600/30 text-emerald-400 text-[11px] font-bold rounded uppercase tracking-wider">Dashboard Muzakki</span>
+                <h1 class="text-xl sm:text-2xl font-bold text-white">Assalamu'alaikum, {{ $user->name }}</h1>
+                <p class="text-slate-400 text-xs font-medium">Semoga Allah SWT menyucikan harta dan memberkahi rezeki Anda.</p>
             </div>
-            <div class="absolute -right-10 -bottom-10 w-56 h-56 rounded-full bg-emerald-700/20 blur-2xl pointer-events-none"></div>
+            <div class="flex items-center gap-2.5">
+                <a href="{{ route('zakat.calculator') }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-lg transition-colors border border-slate-700">
+                    Hitung Zakat
+                </a>
+                <a href="{{ route('zakat.pay') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-xs transition-colors">
+                    Bayar Zakat
+                </a>
+            </div>
         </div>
 
-        <!-- STATS WIDGETS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <!-- Total Paid -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Terverifikasi</p>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">Rp {{ number_format($totalPaid, 0, ',', '.') }}</p>
-                </div>
+        <!-- ANNOUNCEMENT BANNER -->
+        @if(!empty($setting->announcement_banner))
+            <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 shadow-xs text-xs space-y-1">
+                <h4 class="font-bold uppercase tracking-wider text-[11px] text-amber-800 dark:text-amber-300">Pengumuman Baitul Maal</h4>
+                <p class="opacity-90 leading-relaxed">{{ $setting->announcement_banner }}</p>
+            </div>
+        @endif
+
+        <!-- FINTECH SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Card 1: Total Dana Tersalurkan -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Total Tuntas Zakat</span>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">Rp {{ number_format($totalAmount, 0, ',', '.') }}</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Telah diverifikasi & tersalurkan</p>
             </div>
 
-            <!-- Menunggu Verifikasi -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Menunggu Verifikasi</p>
-                    <p class="text-xl font-bold text-amber-600 mt-0.5">{{ $pendingCount }} Transaksi</p>
-                </div>
+            <!-- Card 2: Status Terakhir -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Status Terakhir</span>
+                @if($lastPayment)
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold inline-block
+                            {{ $lastPayment->status === 'Sudah Disalurkan' ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : '' }}
+                            {{ $lastPayment->status === 'Diverifikasi' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
+                            {{ $lastPayment->status === 'Menunggu Verifikasi' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
+                            {{ $lastPayment->status === 'Ditolak' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : '' }}
+                        ">
+                            {{ $lastPayment->status }}
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">{{ $lastPayment->title }} • Rp {{ number_format($lastPayment->amount, 0, ',', '.') }}</p>
+                @else
+                    <h3 class="text-xs font-bold text-slate-400">Belum ada transaksi</h3>
+                @endif
             </div>
 
-            <!-- Diverifikasi -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Diverifikasi</p>
-                    <p class="text-xl font-bold text-emerald-600 mt-0.5">{{ $verifiedCount }} Transaksi</p>
-                </div>
+            <!-- Card 3: Nisab Emas Saat Ini -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Harga Nisab Emas</span>
+                <h3 class="text-lg font-extrabold text-amber-600 dark:text-amber-400">Rp {{ number_format($setting->nisab_gold_price ?? 1400000, 0, ',', '.') }} / gr</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Nisab 85gr = Rp {{ number_format(($setting->nisab_gold_price ?? 1400000) * 85, 0, ',', '.') }}</p>
             </div>
 
-            <!-- Sudah Disalurkan -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sudah Disalurkan</p>
-                    <p class="text-xl font-bold text-blue-600 mt-0.5">{{ $distributedCount }} Transaksi</p>
-                </div>
+            <!-- Card 4: Zakat Fitrah Standard -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Zakat Fitrah / Jiwa</span>
+                <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Rp {{ number_format($setting->zakat_fitrah_nominal ?? 45000, 0, ',', '.') }}</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Setara 2.5 kg beras baik</p>
             </div>
+
         </div>
 
         <!-- RECENT TRANSACTIONS TABLE -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
-            <div class="flex items-center justify-between mb-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs space-y-4">
+            <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900">Riwayat Pembayaran Terbaru</h3>
-                    <p class="text-xs text-slate-500">Status verifikasi pembayaran zakat Anda</p>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Aktivitas Pembayaran Terbaru</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Daftar transaksi pembayaran zakat Anda.</p>
                 </div>
-                <a href="{{ route('zakat.history') }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                <a href="{{ route('zakat.history') }}" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
                     Lihat Semua &rarr;
                 </a>
             </div>
 
-            @if($recentPayments->isEmpty())
-                <!-- EMPTY STATE -->
-                <div class="py-12 text-center">
-                    <div class="w-20 h-20 bg-emerald-50 rounded-full mx-auto flex items-center justify-center text-emerald-500 mb-4">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                    </div>
-                    <h4 class="text-lg font-bold text-slate-800">Belum Ada Pembayaran Zakat</h4>
-                    <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1">Anda belum pernah mengirimkan pembayaran zakat. Tunaikan kewajiban zakat Anda dengan mudah via QRIS.</p>
-                    <a href="{{ route('zakat.pay') }}" class="inline-flex items-center gap-2 mt-5 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md transition">
-                        Bayar Zakat Sekarang
-                    </a>
-                </div>
-            @else
+            @if($payments->count() > 0)
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left text-xs border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                                <th class="py-3 px-4">Tanggal</th>
-                                <th class="py-3 px-4">Pengirim</th>
-                                <th class="py-3 px-4">Peruntukan</th>
-                                <th class="py-3 px-4">Nominal</th>
-                                <th class="py-3 px-4">Status</th>
-                                <th class="py-3 px-4 text-right">Struk</th>
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-bold text-[10px]">
+                                <th class="pb-2.5">Tanggal</th>
+                                <th class="pb-2.5">Kategori</th>
+                                <th class="pb-2.5">Nominal</th>
+                                <th class="pb-2.5">Status</th>
+                                <th class="pb-2.5 text-right">Struk PDF</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                            @foreach($recentPayments as $payment)
-                                <tr class="hover:bg-slate-50/60 transition">
-                                    <td class="py-3.5 px-4 font-medium text-slate-600">{{ $payment->created_at->format('d M Y, H:i') }}</td>
-                                    <td class="py-3.5 px-4 font-semibold text-slate-900">{{ $payment->sender_name }}</td>
-                                    <td class="py-3.5 px-4">
-                                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs">
-                                            {{ $payment->title }}
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                            @foreach($payments->take(5) as $pay)
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                    <td class="py-3 font-medium text-slate-500 dark:text-slate-400">
+                                        {{ $pay->created_at->format('d M Y, H:i') }}
+                                    </td>
+                                    <td class="py-3 font-bold text-slate-900 dark:text-white">
+                                        {{ $pay->title }}
+                                    </td>
+                                    <td class="py-3 font-extrabold text-emerald-600 dark:text-emerald-400">
+                                        Rp {{ number_format($pay->amount, 0, ',', '.') }}
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold
+                                            {{ $pay->status === 'Sudah Disalurkan' ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : '' }}
+                                            {{ $pay->status === 'Diverifikasi' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
+                                            {{ $pay->status === 'Menunggu Verifikasi' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
+                                            {{ $pay->status === 'Ditolak' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : '' }}
+                                        ">
+                                            {{ $pay->status }}
                                         </span>
                                     </td>
-                                    <td class="py-3.5 px-4 font-bold text-emerald-700">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
-                                    <td class="py-3.5 px-4">
-                                        @if($payment->status === 'Menunggu Verifikasi')
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
-                                                🟡 Menunggu Verifikasi
-                                            </span>
-                                        @elseif($payment->status === 'Diverifikasi')
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                                                🟢 Diverifikasi
-                                            </span>
-                                        @elseif($payment->status === 'Sudah Disalurkan')
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                                                🔵 Sudah Disalurkan
-                                            </span>
+                                    <td class="py-3 text-right">
+                                        @if(in_array($pay->status, ['Diverifikasi', 'Sudah Disalurkan']))
+                                            <a href="{{ route('zakat.receipt', $pay->id) }}" target="_blank" class="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold rounded hover:bg-emerald-100 transition-colors">
+                                                Unduh PDF
+                                            </a>
                                         @else
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">
-                                                🔴 Ditolak
-                                            </span>
+                                            <span class="text-[11px] text-slate-400 italic">Proses Verifikasi</span>
                                         @endif
-                                    </td>
-                                    <td class="py-3.5 px-4 text-right">
-                                        <a href="{{ route('zakat.receipt', $payment->id) }}" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-800 hover:underline">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            Struk
-                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+            @else
+                <div class="text-center py-8 space-y-1">
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400">Belum Ada Transaksi Pembayaran</p>
+                    <p class="text-[11px] text-slate-400 max-w-sm mx-auto">Anda belum memiliki riwayat pembayaran zakat.</p>
+                </div>
             @endif
         </div>
+
     </div>
 </x-app-layout>

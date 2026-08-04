@@ -20,11 +20,11 @@ class UserResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationLabel = 'Data Muzakki & User';
+    protected static ?string $navigationLabel = 'Data Pengguna & Amil';
 
-    protected static ?string $pluralModelLabel = 'Muzakki & User';
+    protected static ?string $pluralModelLabel = 'Pengguna & Amil';
 
-    protected static ?string $modelLabel = 'Muzakki';
+    protected static ?string $modelLabel = 'Pengguna';
 
     public static function form(Schema $schema): Schema
     {
@@ -53,6 +53,7 @@ class UserResource extends Resource
                 Forms\Components\Select::make('role')
                     ->options([
                         'user' => 'Muzakki (User)',
+                        'petugas' => 'Petugas Amil Zakat',
                         'admin' => 'Administrator',
                     ])
                     ->default('user')
@@ -98,6 +99,7 @@ class UserResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'admin' => 'danger',
+                        'petugas' => 'warning',
                         'user' => 'success',
                         default => 'gray',
                     })
@@ -112,6 +114,7 @@ class UserResource extends Resource
                 Tables\Filters\SelectFilter::make('role')
                     ->options([
                         'user' => 'Muzakki (User)',
+                        'petugas' => 'Petugas Amil Zakat',
                         'admin' => 'Administrator',
                     ]),
             ])

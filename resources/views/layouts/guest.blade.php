@@ -1,41 +1,73 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Baitul Maal') }} - Portal Zakat</title>
+        <title>{{ config('app.name', 'Baitul Maal') }} - Autentikasi Zakat</title>
+
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#059669">
 
         <!-- Google Fonts: Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        <!-- Tailwind CSS CDN Fallback & Vite -->
         <script src="https://cdn.tailwindcss.com"></script>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    }
+                }
+            }
+        </script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
         <style>
             body { font-family: 'Inter', sans-serif; }
+            [x-cloak] { display: none !important; }
         </style>
     </head>
-    <body class="bg-gradient-to-br from-emerald-50 via-slate-50 to-teal-100 min-h-screen text-gray-900 antialiased flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-200 mb-3">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0v-4m0 4h4m-4-4l-4 4m8-4l4 4"/>
-                </svg>
-            </div>
-            <h1 class="text-3xl font-extrabold text-emerald-900 tracking-tight">BAITUL MAAL</h1>
-            <p class="text-sm font-medium text-emerald-700 mt-1">Sistem Informasi Pengelolaan & Penyaluran Zakat</p>
+    <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen antialiased flex flex-col justify-between py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+        
+        <!-- Header area with logo & theme toggle -->
+        <div class="sm:mx-auto sm:w-full sm:max-w-md flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
+                    BM
+                </div>
+                <div>
+                    <span class="font-extrabold text-base tracking-wide text-slate-900 dark:text-white block leading-none">BAITUL MAAL</span>
+                    <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sistem Zakat Digital</span>
+                </div>
+            </a>
+
+            <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="p-2 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
+                <template x-if="darkMode">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </template>
+                <template x-if="!darkMode">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </template>
+            </button>
         </div>
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-lg">
-            <div class="bg-white/90 backdrop-blur-md py-8 px-6 shadow-2xl rounded-3xl border border-emerald-100 sm:px-10">
+        <!-- Main Card Container -->
+        <div class="sm:mx-auto sm:w-full sm:max-w-md my-auto">
+            <div class="bg-white dark:bg-slate-900 py-7 px-6 sm:px-8 shadow-sm border border-slate-200 dark:border-slate-800 rounded-2xl">
                 {{ $slot }}
             </div>
-            <p class="text-center text-xs text-gray-500 mt-6">&copy; {{ date('Y') }} Baitul Maal. Seluruh hak cipta dilindungi.</p>
         </div>
+
+        <!-- Footer Footer -->
+        <div class="text-center text-xs text-slate-500 dark:text-slate-500">
+            &copy; {{ date('Y') }} Baitul Maal. Seluruh hak cipta dilindungi.
+        </div>
+
     </body>
 </html>

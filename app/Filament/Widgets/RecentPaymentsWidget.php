@@ -3,10 +3,12 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Payment;
+use App\Services\AuditService;
 use Filament\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Auth;
 
 class RecentPaymentsWidget extends BaseWidget
 {
@@ -58,10 +60,20 @@ class RecentPaymentsWidget extends BaseWidget
                     ->color('success')
                     ->visible(fn (Payment $record): bool => $record->status === 'Menunggu Verifikasi')
                     ->action(function (Payment $record) {
+                        $oldValues = $record->toArray();
                         $record->update([
                             'status' => 'Diverifikasi',
+                            'verified_by' => Auth::id(),
                             'verified_at' => now(),
                         ]);
+
+                        AuditService::log(
+                            'Verifikasi Pembayaran',
+                            'Memverifikasi pembayaran #' . $record->id . ' sebesar Rp ' . number_format($record->amount, 0, ',', '.'),
+                            $record,
+                            $oldValues,
+                            $record->toArray()
+                        );
                     }),
 
                 Action::make('distribute')
@@ -70,10 +82,19 @@ class RecentPaymentsWidget extends BaseWidget
                     ->color('info')
                     ->visible(fn (Payment $record): bool => in_array($record->status, ['Diverifikasi', 'Menunggu Verifikasi']))
                     ->action(function (Payment $record) {
+                        $oldValues = $record->toArray();
                         $record->update([
                             'status' => 'Sudah Disalurkan',
                             'distributed_at' => now(),
                         ]);
+
+                        AuditService::log(
+                            'Penyaluran Zakat',
+                            'Zakat #' . $record->id . ' telah disalurkan kepada Mustahik.',
+                            $record,
+                            $oldValues,
+                            $record->toArray()
+                        );
                     }),
             ]);
     }

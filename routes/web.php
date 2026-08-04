@@ -9,7 +9,7 @@ Route::get('/', function () {
     if (Auth::check()) {
         return redirect()->route('dashboard');
     }
-    return redirect()->route('login');
+    return view('welcome');
 });
 
 Route::middleware('auth')->group(function () {

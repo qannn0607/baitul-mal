@@ -16,22 +16,25 @@ class Payment extends Model
         'amount',
         'proof_image',
         'status',
+        'rejection_reason',
+        'verified_by',
         'verified_at',
         'distributed_at',
         'notes',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'amount' => 'integer',
-            'verified_at' => 'datetime',
-            'distributed_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'verified_at' => 'datetime',
+        'distributed_at' => 'datetime',
+    ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 }

@@ -1,122 +1,159 @@
+<?php
+    $payments = Auth::user()->payments()->latest()->get();
+?>
+
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-6" 
+         x-data="{
+             searchQuery: '',
+             statusFilter: 'all',
+             previewModalOpen: false,
+             previewImageUrl: '',
+             previewTitle: '',
 
-        <!-- Header Title & Filters -->
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+             openPreview(url, title) {
+                 this.previewImageUrl = url;
+                 this.previewTitle = title;
+                 this.previewModalOpen = true;
+             }
+         }">
+
+        <!-- HEADER TITLE -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Riwayat Transaksi</span>
-                <h1 class="text-2xl font-bold text-slate-900 mt-2">Riwayat Pembayaran Zakat</h1>
-                <p class="text-sm text-slate-500 mt-1">Daftar seluruh transaksi pembayaran zakat dan status penyalurannya.</p>
+                <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Riwayat Pembayaran Zakat</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau status verifikasi dan penyaluran zakat Anda.</p>
             </div>
-
-            <!-- Status Filters -->
-            <div class="flex flex-wrap items-center gap-2">
-                <a href="{{ route('zakat.history') }}" class="px-3.5 py-2 text-xs font-bold rounded-xl transition {{ empty($statusFilter) ? 'bg-emerald-600 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-                    Semua Status
-                </a>
-                <a href="{{ route('zakat.history', ['status' => 'Menunggu Verifikasi']) }}" class="px-3.5 py-2 text-xs font-bold rounded-xl transition {{ $statusFilter === 'Menunggu Verifikasi' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-50 text-amber-700 hover:bg-amber-100' }}">
-                    🟡 Menunggu Verifikasi
-                </a>
-                <a href="{{ route('zakat.history', ['status' => 'Diverifikasi']) }}" class="px-3.5 py-2 text-xs font-bold rounded-xl transition {{ $statusFilter === 'Diverifikasi' ? 'bg-emerald-600 text-white shadow-md' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
-                    🟢 Diverifikasi
-                </a>
-                <a href="{{ route('zakat.history', ['status' => 'Sudah Disalurkan']) }}" class="px-3.5 py-2 text-xs font-bold rounded-xl transition {{ $statusFilter === 'Sudah Disalurkan' ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-50 text-blue-700 hover:bg-blue-100' }}">
-                    🔵 Sudah Disalurkan
-                </a>
-            </div>
+            <a href="{{ route('zakat.pay') }}" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm transition-colors flex items-center gap-1.5 self-start sm:self-auto">
+                <span>+ Bayar Zakat Baru</span>
+            </a>
         </div>
 
-        <!-- TRANSACTIONS TABLE & LIST -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
-            @if($payments->isEmpty())
-                <!-- EMPTY STATE -->
-                <div class="py-12 text-center">
-                    <div class="w-16 h-16 bg-slate-100 rounded-2xl mx-auto flex items-center justify-center text-slate-400 mb-3">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    </div>
-                    <h4 class="text-base font-bold text-slate-800">Tidak Ada Pembayaran Ditemukan</h4>
-                    <p class="text-xs text-slate-500 max-w-xs mx-auto mt-1">Belum ada riwayat pembayaran zakat dengan filter ini.</p>
-                </div>
-            @else
+        <!-- SEARCH & FILTER BAR -->
+        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row gap-3 justify-between items-center">
+            
+            <!-- Search input -->
+            <div class="w-full sm:w-80">
+                <input type="text" x-model="searchQuery" placeholder="Cari judul / nama pengirim..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white font-medium text-xs focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+            </div>
+
+            <!-- Status Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+                <button @click="statusFilter = 'all'" :class="statusFilter === 'all' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                    Semua
+                </button>
+                <button @click="statusFilter = 'Menunggu Verifikasi'" :class="statusFilter === 'Menunggu Verifikasi' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                    Menunggu
+                </button>
+                <button @click="statusFilter = 'Diverifikasi'" :class="statusFilter === 'Diverifikasi' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                    Diverifikasi
+                </button>
+                <button @click="statusFilter = 'Sudah Disalurkan'" :class="statusFilter === 'Sudah Disalurkan' ? 'bg-sky-600 text-white' : 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                    Disalurkan
+                </button>
+            </div>
+
+        </div>
+
+        <!-- TRANSACTIONS LIST -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs">
+            @if($payments->count() > 0)
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left text-xs border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                                <th class="py-3 px-4">Tanggal & Waktu</th>
-                                <th class="py-3 px-4">Nama Pengirim</th>
-                                <th class="py-3 px-4">Peruntukan Zakat</th>
-                                <th class="py-3 px-4">Nominal</th>
-                                <th class="py-3 px-4">Status Verifikasi</th>
-                                <th class="py-3 px-4 text-center">Bukti Transfer</th>
-                                <th class="py-3 px-4 text-right">Aksi / Struk</th>
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-bold text-[10px]">
+                                <th class="pb-2.5">Tanggal & ID</th>
+                                <th class="pb-2.5">Peruntukan Zakat</th>
+                                <th class="pb-2.5">Nominal</th>
+                                <th class="pb-2.5">Bukti Resi</th>
+                                <th class="pb-2.5">Status</th>
+                                <th class="pb-2.5 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                            @foreach($payments as $payment)
-                                <tr class="hover:bg-slate-50/60 transition">
-                                    <td class="py-3.5 px-4 font-medium text-slate-600">
-                                        {{ $payment->created_at->format('d M Y') }}
-                                        <span class="block text-xs text-slate-400">{{ $payment->created_at->format('H:i') }} WIB</span>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                            @foreach($payments as $pay)
+                                <tr x-show="(statusFilter === 'all' || statusFilter === '{{ $pay->status }}') && ('{{ strtolower($pay->title) }}'.includes(searchQuery.toLowerCase()) || '{{ strtolower($pay->sender_name) }}'.includes(searchQuery.toLowerCase()))" 
+                                    class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                    
+                                    <td class="py-3">
+                                        <p class="font-bold text-slate-900 dark:text-white">#TRX-{{ str_pad($pay->id, 5, '0', STR_PAD_LEFT) }}</p>
+                                        <p class="text-[11px] text-slate-400">{{ $pay->created_at->format('d M Y, H:i') }}</p>
                                     </td>
-                                    <td class="py-3.5 px-4 font-bold text-slate-900">{{ $payment->sender_name }}</td>
-                                    <td class="py-3.5 px-4">
-                                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-semibold text-xs">
-                                            {{ $payment->title }}
-                                        </span>
-                                    </td>
-                                    <td class="py-3.5 px-4 font-extrabold text-emerald-700">
-                                        Rp {{ number_format($payment->amount, 0, ',', '.') }}
-                                    </td>
-                                    <td class="py-3.5 px-4">
-                                        @if($payment->status === 'Menunggu Verifikasi')
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
-                                                🟡 Menunggu Verifikasi
-                                            </span>
-                                        @elseif($payment->status === 'Diverifikasi')
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                                                🟢 Diverifikasi
-                                            </span>
-                                        @elseif($payment->status === 'Sudah Disalurkan')
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                                                🔵 Sudah Disalurkan
-                                            </span>
-                                        @else
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">
-                                                🔴 Ditolak
-                                            </span>
-                                        @endif
 
-                                        @if($payment->notes)
-                                            <p class="text-xs text-slate-500 italic mt-1 max-w-xs">Catatan: {{ $payment->notes }}</p>
-                                        @endif
+                                    <td class="py-3">
+                                        <p class="font-bold text-slate-900 dark:text-white">{{ $pay->title }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengirim: {{ $pay->sender_name }}</p>
                                     </td>
-                                    <td class="py-3.5 px-4 text-center">
-                                        @if($payment->proof_image)
-                                            <a href="{{ asset('storage/' . $payment->proof_image) }}" target="_blank" class="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-emerald-600 font-semibold">
-                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                Lihat Bukti
+
+                                    <td class="py-3 font-extrabold text-emerald-600 dark:text-emerald-400">
+                                        Rp {{ number_format($pay->amount, 0, ',', '.') }}
+                                    </td>
+
+                                    <td class="py-3">
+                                        <button @click="openPreview('{{ Storage::url($pay->proof_image) }}', '{{ $pay->title }}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[11px] font-bold rounded text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                                            Lihat Resi
+                                        </button>
+                                    </td>
+
+                                    <td class="py-3">
+                                        <div class="space-y-0.5">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold inline-block
+                                                {{ $pay->status === 'Sudah Disalurkan' ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : '' }}
+                                                {{ $pay->status === 'Diverifikasi' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
+                                                {{ $pay->status === 'Menunggu Verifikasi' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
+                                                {{ $pay->status === 'Ditolak' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : '' }}
+                                            ">
+                                                {{ $pay->status }}
+                                            </span>
+                                            @if($pay->status === 'Ditolak' && $pay->rejection_reason)
+                                                <p class="text-[11px] text-rose-500 font-medium">Alasan: {{ $pay->rejection_reason }}</p>
+                                            @endif
+                                        </div>
+                                    </td>
+
+                                    <td class="py-3 text-right">
+                                        @if(in_array($pay->status, ['Diverifikasi', 'Sudah Disalurkan']))
+                                            <a href="{{ route('zakat.receipt', $pay->id) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-xs inline-flex items-center gap-1 transition-colors">
+                                                Cetak PDF
                                             </a>
                                         @else
-                                            <span class="text-xs text-slate-400">-</span>
+                                            <span class="text-[11px] text-slate-400 italic">Menunggu Verifikasi</span>
                                         @endif
                                     </td>
-                                    <td class="py-3.5 px-4 text-right">
-                                        <a href="{{ route('zakat.receipt', $payment->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-xs rounded-lg transition">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                                            Cetak Struk
-                                        </a>
-                                    </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Pagination -->
-                <div class="mt-6">
-                    {{ $payments->links() }}
+            @else
+                <div class="text-center py-12 space-y-1">
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Belum Ada Transaksi Pembayaran</p>
+                    <p class="text-[11px] text-slate-400 max-w-sm mx-auto">Riwayat pembayaran zakat Anda akan ditampilkan di sini.</p>
                 </div>
             @endif
+        </div>
+
+        <!-- IMAGE PREVIEW MODAL -->
+        <div x-show="previewModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div x-show="previewModalOpen" x-transition:enter="transition-opacity ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="previewModalOpen = false" class="fixed inset-0 bg-slate-950/70"></div>
+
+            <div x-show="previewModalOpen" x-transition:enter="transition ease-out duration-150 transform" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-100 transform" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl p-5 max-w-lg w-full shadow-xl z-10 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white" x-text="'Bukti Transfer: ' + previewTitle"></h3>
+                    <button @click="previewModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        ✕
+                    </button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800">
+                    <img :src="previewImageUrl" alt="Preview Resi" class="w-full max-h-96 object-contain rounded">
+                </div>
+                <div class="text-right">
+                    <button @click="previewModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-lg">
+                        Tutup
+                    </button>
+                </div>
+            </div>
         </div>
 
     </div>

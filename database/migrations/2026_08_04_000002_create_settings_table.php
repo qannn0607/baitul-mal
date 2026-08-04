@@ -16,6 +16,14 @@ return new class extends Migration
             $table->string('qris_image')->nullable();
             $table->unsignedBigInteger('nisab_gold_price')->default(1400000); // Rp 1.400.000 / gram
             $table->unsignedBigInteger('zakat_fitrah_nominal')->default(45000); // Rp 45.000 / jiwa
+            $table->text('announcement_banner')->nullable();
+            $table->json('bank_accounts')->nullable();
+            $table->string('org_name')->default('Baitul Maal Amil Zakat');
+            $table->text('org_description')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->string('contact_email')->nullable();
+            $table->text('contact_address')->nullable();
+            $table->text('footer_text')->nullable();
             $table->timestamps();
         });
     }

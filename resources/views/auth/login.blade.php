@@ -1,7 +1,7 @@
 <x-guest-layout>
-    <div class="mb-6 text-center">
-        <h2 class="text-2xl font-bold text-emerald-800">Masuk ke Baitul Maal</h2>
-        <p class="text-sm text-gray-600 mt-1">Masukkan nama lengkap dan password Anda</p>
+    <div class="mb-6 space-y-1">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Masuk ke Akun</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Masukkan Nama Lengkap dan Password yang terdaftar.</p>
     </div>
 
     <!-- Session Status -->
@@ -12,39 +12,36 @@
 
         <!-- Nama Lengkap -->
         <div>
-            <x-input-label for="name" value="Nama Lengkap" class="font-semibold text-gray-700" />
-            <x-text-input id="name" class="block mt-1 w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" type="text" name="name" :value="old('name')" required autofocus placeholder="Masukkan Nama Lengkap" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm text-red-600" />
+            <x-input-label for="name" value="Nama Lengkap" />
+            <x-text-input id="name" type="text" name="name" :value="old('name')" required autofocus placeholder="Masukkan Nama Lengkap" />
+            <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs text-rose-600" />
         </div>
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" value="Password" class="font-semibold text-gray-700" />
-            <x-text-input id="password" class="block mt-1 w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-                            type="password"
-                            name="password"
-                            required placeholder="••••••••" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-600" />
+            <x-input-label for="password" value="Password" />
+            <x-text-input id="password" type="password" name="password" required placeholder="••••••••" />
+            <x-input-error :messages="$errors->get('password')" class="mt-1 text-xs text-rose-600" />
         </div>
 
         <!-- Remember Me -->
         <div class="flex items-center justify-between">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">Ingat Saya</span>
+            <label for="remember_me" class="inline-flex items-center cursor-pointer">
+                <input id="remember_me" type="checkbox" class="rounded border-slate-300 dark:border-slate-700 text-emerald-600 focus:ring-emerald-600" name="remember">
+                <span class="ms-2 text-xs font-medium text-slate-600 dark:text-slate-400">Ingat Saya</span>
             </label>
         </div>
 
         <div>
-            <button type="submit" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+            <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2">
                 Masuk
             </button>
         </div>
 
-        <div class="text-center mt-4">
-            <p class="text-sm text-gray-600">
+        <div class="text-center pt-2 border-t border-slate-100 dark:border-slate-800">
+            <p class="text-xs text-slate-600 dark:text-slate-400">
                 Belum punya akun? 
-                <a href="{{ route('register') }}" class="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                <a href="{{ route('register') }}" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
                     Daftar di sini
                 </a>
             </p>
