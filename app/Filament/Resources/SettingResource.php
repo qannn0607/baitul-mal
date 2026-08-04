@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Services\AuditService;
 use Filament\Actions\EditAction;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -28,7 +29,7 @@ class SettingResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('Informasi Banner & Nisab')
+                Section::make('Informasi Banner & Nisab')
                     ->schema([
                         Forms\Components\Textarea::make('announcement_banner')
                             ->label('Pengumuman Banner (Ditampilkan di Dashboard Muzakki)')
@@ -53,7 +54,7 @@ class SettingResource extends Resource
                             ->label('Upload Gambar QRIS Resmi'),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Rekening Bank Transfer Resmi')
+                Section::make('Rekening Bank Transfer Resmi')
                     ->schema([
                         Forms\Components\Repeater::make('bank_accounts')
                             ->schema([
@@ -72,7 +73,7 @@ class SettingResource extends Resource
                             ->defaultItems(2),
                     ]),
 
-                Forms\Components\Section::make('Informasi Organisasi & Kontak')
+                Section::make('Informasi Organisasi & Kontak')
                     ->schema([
                         Forms\Components\TextInput::make('org_name')
                             ->label('Nama Organisasi')
