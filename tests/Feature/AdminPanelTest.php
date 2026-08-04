@@ -77,4 +77,13 @@ class AdminPanelTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_filament_logout_redirects_to_landing_page(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin)->post('/admin/logout');
+
+        $response->assertRedirect('/');
+    }
 }
