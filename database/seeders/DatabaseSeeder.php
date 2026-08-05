@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\AuditLog;
-use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\ZakatFundService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -87,109 +86,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 5. Sample Payments
-        Payment::updateOrCreate(
-            ['id' => 1],
-            [
-                'user_id' => $user->id,
-                'sender_name' => 'Ahmad Abdullah',
-                'title' => 'Zakat Penghasilan',
-                'amount' => 250000,
-                'proof_image' => 'payment_proofs/sample.png',
-                'status' => 'Sudah Disalurkan',
-                'verified_by' => $admin->id,
-                'verified_at' => now()->subDays(5),
-                'distributed_at' => now()->subDays(2),
-                'notes' => 'Telah disalurkan kepada 5 Mustahik Fakir Miskin di Wilayah Jakarta.',
-            ]
-        );
-
-        Payment::updateOrCreate(
-            ['id' => 2],
-            [
-                'user_id' => $user->id,
-                'sender_name' => 'Ahmad Abdullah',
-                'title' => 'Zakat Maal',
-                'amount' => 1500000,
-                'proof_image' => 'payment_proofs/sample.png',
-                'status' => 'Transaksi Sukses',
-                'verified_by' => $petugas->id,
-                'verified_at' => now()->subDays(1),
-                'notes' => 'Transaksi sukses diverifikasi oleh petugas.',
-            ]
-        );
-
-        Payment::updateOrCreate(
-            ['id' => 3],
-            [
-                'user_id' => $user->id,
-                'sender_name' => 'Ahmad Abdullah',
-                'title' => 'Zakat Fitrah',
-                'amount' => 90000,
-                'proof_image' => 'payment_proofs/sample.png',
-                'status' => 'Menunggu Verifikasi',
-                'notes' => null,
-            ]
-        );
-
-        // 6. Sample Audit Logs
-        AuditLog::create([
-            'user_id' => $admin->id,
-            'action' => 'Verifikasi Pembayaran',
-            'description' => 'Admin memverifikasi pembayaran Zakat Penghasilan sebesar Rp 250.000 dari Ahmad Abdullah.',
-            'ip_address' => '127.0.0.1',
-            'user_agent' => 'Mozilla/5.0',
-        ]);
-
-        AuditLog::create([
-            'user_id' => $admin->id,
-            'action' => 'Penyaluran Zakat',
-            'description' => 'Admin menandai Zakat Penghasilan #1 sebagai Sudah Disalurkan.',
-            'ip_address' => '127.0.0.1',
-            'user_agent' => 'Mozilla/5.0',
-        ]);
-
-        // 7. Sample Distributions (8 Asnaf)
-        \App\Models\Distribution::updateOrCreate(
-            ['id' => 1],
-            [
-                'program_name' => 'Program Paket Sembako Dhuafa',
-                'asnaf' => 'Fakir',
-                'recipient_name' => 'Keluarga Ibu Maryam (Fakir)',
-                'amount' => 500000,
-                'distribution_date' => now()->subDays(4),
-                'notes' => 'Penyaluran sembako bahan pokok pangan bulanan.',
-                'distributed_by' => $admin->id,
-            ]
-        );
-
-        \App\Models\Distribution::updateOrCreate(
-            ['id' => 2],
-            [
-                'program_name' => 'Beasiswa Santri Penghafal Al-Qur\'an',
-                'asnaf' => 'Fisabilillah',
-                'recipient_name' => 'Santri Rumah Tahfidz Syuhada',
-                'amount' => 750000,
-                'distribution_date' => now()->subDays(3),
-                'notes' => 'Bantuan perlengkapan belajar & SPP santri.',
-                'distributed_by' => $admin->id,
-            ]
-        );
-
-        \App\Models\Distribution::updateOrCreate(
-            ['id' => 3],
-            [
-                'program_name' => 'Bantuan Biaya Pengobatan Darurat',
-                'asnaf' => 'Miskin',
-                'recipient_name' => 'Bapak Supardi (Miskin)',
-                'amount' => 400000,
-                'distribution_date' => now()->subDays(1),
-                'notes' => 'Penyaluran zakat untuk pengobatan rawat inap.',
-                'distributed_by' => $petugas->id,
-            ]
-        );
-
-        // 8. Sync Zakat Fund Ledger Balance
-        \App\Services\ZakatFundService::recalculateBalance();
+        // 5. Sync Zakat Fund Ledger Balance (Reset to 0 if clean)
+        ZakatFundService::recalculateBalance();
     }
 }
