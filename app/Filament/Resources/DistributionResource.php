@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DistributionResource\Pages;
 use App\Models\Distribution;
 use App\Models\Payment;
+use App\Services\ZakatFundService;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -28,20 +29,9 @@ class DistributionResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    /**
-     * Hitung total saldo zakat terhimpun (Transaksi Sukses / Disalurkan) yang tersedia untuk disalurkan
-     */
     public static function getAvailableBalance(?int $currentDistributionId = null): float
     {
-        $totalCollected = Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])->sum('amount');
-
-        $query = Distribution::query();
-        if ($currentDistributionId) {
-            $query->where('id', '!=', $currentDistributionId);
-        }
-        $totalDistributed = $query->sum('amount');
-
-        return max(0, $totalCollected - $totalDistributed);
+        return ZakatFundService::getCurrentBalance($currentDistributionId);
     }
 
     public static function form(Schema $schema): Schema
@@ -79,14 +69,16 @@ class DistributionResource extends Resource
                     ->numeric()
                     ->prefix('Rp')
                     ->minValue(1000)
-                    ->maxValue(function ($record) {
-                        return \App\Services\ZakatFundService::getCurrentBalance($record?->id);
-                    })
-                    ->validationMessages([
-                        'max' => 'Nominal penyaluran melebihi saldo terhimpun yang tersedia pada Buku Kas. Saldo zakat tidak mencukupi.',
+                    ->rules([
+                        fn ($record) => function (string $attribute, $value, \Closure $fail) use ($record) {
+                            $available = ZakatFundService::getCurrentBalance($record?->id);
+                            if ((float) $value > $available) {
+                                $fail('Nominal penyaluran (Rp ' . number_format((float) $value, 0, ',', '.') . ') melebihi sisa saldo kas zakat yang tersedia (Rp ' . number_format($available, 0, ',', '.') . '). Saldo tidak mencukupi!');
+                            }
+                        },
                     ])
                     ->helperText(function ($record) {
-                        $balance = \App\Services\ZakatFundService::getCurrentBalance($record?->id);
+                        $balance = ZakatFundService::getCurrentBalance($record?->id);
                         return 'Saldo Kas Zakat Terhimpun yang tersedia untuk disalurkan saat ini: Rp ' . number_format($balance, 0, ',', '.');
                     })
                     ->placeholder('Contoh: 1500000')
