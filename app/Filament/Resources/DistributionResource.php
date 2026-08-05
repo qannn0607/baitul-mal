@@ -141,6 +141,14 @@ class DistributionResource extends Resource
                     ->label('Petugas Amil'),
             ])
             ->defaultSort('distribution_date', 'desc')
+            ->headerActions([
+                \Filament\Actions\Action::make('print_report')
+                    ->label('Cetak Laporan Keuangan (PDF)')
+                    ->icon('heroicon-o-printer')
+                    ->color('success')
+                    ->url(route('reports.financial.print'))
+                    ->openUrlInNewTab(),
+            ])
             ->filters([
                 Tables\Filters\SelectFilter::make('asnaf')
                     ->options([

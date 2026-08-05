@@ -71,6 +71,14 @@ class ZakatLedgerResource extends Resource
                     ->label('Keterangan Mutasi Kas'),
             ])
             ->defaultSort('created_at', 'desc')
+            ->headerActions([
+                \Filament\Actions\Action::make('print_report')
+                    ->label('Cetak Laporan Keuangan (PDF)')
+                    ->icon('heroicon-o-printer')
+                    ->color('success')
+                    ->url(route('reports.financial.print'))
+                    ->openUrlInNewTab(),
+            ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->options([

@@ -28,6 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/riwayat-pembayaran/check/{payment}', [ZakatController::class, 'checkStatus'])->name('zakat.check');
     Route::get('/struk/{payment}', [ZakatController::class, 'receipt'])->name('zakat.receipt');
 
+    // Cetak Laporan Keuangan PDF
+    Route::get('/reports/financial/print', [\App\Http\Controllers\ExportReportController::class, 'financialReport'])->name('reports.financial.print');
+
+    // Pengajuan Bantuan Mustahik
+    Route::get('/mustahik/apply', [\App\Http\Controllers\MustahikApplicationController::class, 'apply'])->name('mustahik.apply');
+    Route::post('/mustahik/apply', [\App\Http\Controllers\MustahikApplicationController::class, 'storeApply'])->name('mustahik.apply.store');
+    Route::get('/mustahik/my-applications', [\App\Http\Controllers\MustahikApplicationController::class, 'myApplications'])->name('mustahik.my_applications');
+
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

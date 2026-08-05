@@ -15,6 +15,18 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('zakat.calculator')" :active="request()->routeIs('zakat.calculator')">
+                        {{ __('Kalkulator Zakat') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('zakat.pay')" :active="request()->routeIs('zakat.pay')">
+                        {{ __('Bayar Zakat') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('zakat.history')" :active="request()->routeIs('zakat.history')">
+                        {{ __('Riwayat Zakat') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('mustahik.apply')" :active="request()->routeIs('mustahik.*')">
+                        {{ __('Ajukan Bantuan Mustahik') }}
+                    </x-nav-link>
                 </div>
             </div>
 
