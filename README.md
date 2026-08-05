@@ -1,190 +1,227 @@
-# Baitul Maal - Sistem Informasi Pengelolaan Zakat & Penyaluran 8 Asnaf
+```
+  ____   _  _____ _____ _   _ _     __  __    _    _    _     
+ | __ ) / \|_   _|  ___| | | | |   |  \/  |  / \  / \  | |    
+ |  _ \/ _ \ | | | |_  | | | | |   | |\/| | / _ \/ _ \ | |    
+ | |_) / ___ \| | |  _| | |_| | |___| |  | |/ ___ / ___ \| |___ 
+ |____/_/   \_\_| |_|    \___/|_____|_|  |_/_/   /_/   \_\_____|
+```
 
-Baitul Maal adalah platform akuntansi zakat digital berbasis web yang dirancang untuk mengelola penerimaan, kalkulasi, verifikasi pembayaran real-time, serta penyaluran dana zakat secara transparan dan akuntabel sesuai dengan standar syariat 8 Asnaf Mustahik.
+# BAITUL MAAL FINANCIAL ENGINE & MUSTAHIK PORTAL
 
-Sistem ini dilengkapi dengan integrasi Payment Gateway Midtrans (Snap & Dynamic QRIS Webhook Callback), Buku Kas Zakat (Double-Entry Ledger System), Portal Permohonan Bantuan Mustahik Online, serta Modul Ekspor Laporan Keuangan Resmi berbasis PDF.
-
----
-
-## Teknologi yang Digunakan
-
-- Framework Backend: Laravel 11 (PHP 8.2+)
-- Panel Admin: Filament v3
-- Database: MySQL / MariaDB
-- Styling & Frontend: Tailwind CSS & Alpine.js
-- Payment Gateway: Midtrans Snap & Webhook Notification API
-- Containerization: Docker & Docker Compose
+System Version: 2.4.0-STABLE  
+Framework: Laravel 11.x (PHP 8.2+)  
+Architecture: Double-Entry Ledger & Midtrans Webhook Engine  
 
 ---
 
-## Fitur Utama Sistem
+## Ringkasan Eksekutif
 
-1. Hitung & Pembayaran Zakat Real-Time:
-   - Kalkulator otomatis Zakat Maal (Emas, Tabungan, Perdagangan) & Zakat Fitrah berbasis standar nisab.
-   - Integrasi Midtrans Snap & QRIS otomatis.
-   - Webhook Callback dengan verifikasi Signature Key untuk pembaruan status transaksi secara instan tanpa perlu unggah bukti manual.
-
-2. Buku Kas Zakat (Real-Time Double-Entry Ledger):
-   - Pencatatan otomatis transaksi Uang Masuk (Credit) saat pembayaran sukses.
-   - Pencatatan otomatis transaksi Uang Keluar (Debit) saat dana disalurkan ke Mustahik.
-   - Pembaruan saldo terhimpun secara real-time dengan validasi pencegahan saldo minus (Server-Side Overdraft Prevention).
-
-3. Portal Pengajuan Bantuan Mustahik:
-   - Layanan permohonan bantuan zakat online bagi calon Mustahik (upload NIK KTP dan SKTM).
-   - Sistem pelacakan status permohonan secara real-time (Menunggu Verifikasi, Disetujui, Telah Disalurkan, Ditolak).
-   - Integrasi langsung dengan modul penyaluran zakat Admin.
-
-4. Laporan Keuangan Resmi & Cetak PDF:
-   - Rekapitulasi mutasi kas periode tertentu.
-   - Rincian alokasi distribusi berdasarkan 8 Kategori Asnaf Mustahik (Fakir, Miskin, Amil, Muallaf, Riqab, Gharim, Fisabilillah, Ibnu Sabil).
-   - Tampilan dokumen print-ready lengkap dengan Kop Surat Lembaga, Tanggal Cetak, serta Stempel/Tanda Tangan Pengurus & Bendahara.
-
-5. Audit Log & Keamanan Sistem:
-   - Pencatatan otomatis setiap aktivitas penting pengurus/admin (Audit Log).
-   - Verifikasi otentikasi berbasis Breeze & Role-Based Access Control (Admin, Petugas, Muzakki).
+Baitul Maal adalah platform akuntansi zakat terintegrasi yang dirancang untuk mengelola seluruh ekosistem keuangan zakat—mulai dari kalkulasi nisab otomatis, gateway pembayaran digital real-time via Midtrans, pencatatan mutasi kas ganda (Double-Entry Ledger System), hingga verifikasi permohonan bantuan Mustahik berbasis 8 Asnaf dan penerbitan laporan keuangan standar audit dalam format PDF.
 
 ---
 
-## Daftar Endpoint & API
+## Arsitektur & Alur Data Sistem
 
-Berikut adalah seluruh daftar rute HTTP, metode, middleware, dan fungsi kegunaannya:
-
-### 1. Web Callback & API Public
-
-- Method: POST
-- Endpoint: /api/midtrans/notification
-- Middleware: Excluded CSRF Validation
-- Action: App\Http\Controllers\Api\PaymentCallbackController@handleNotification
-- Kegunaan: Menerima payload webhook dari server Midtrans. Melakukan dekripsi dan verifikasi Signature Key (SHA512). Jika status transaksi bernilai settlement/capture, sistem memperbarui status pembayaran ke "Transaksi Sukses" dan mencatat transaksi Uang Masuk (Credit) pada Buku Kas Zakat secara otomatis.
-
-### 2. Autentikasi & Navigasi Utama
-
-- Method: GET
-- Endpoint: /
-- Action: Closure (Landing Page / Redirect Dashboard)
-- Kegunaan: Menampilkan halaman utama landing page untuk pengunjung non-login, atau mengalihkan user terautentikasi ke /dashboard.
-
-- Method: GET
-- Endpoint: /dashboard
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@dashboard
-- Kegunaan: Menampilkan ringkasan saldo kas zakat, statistik alokasi 8 Asnaf, status transaksi terakhir, dan riwayat penyaluran terbaru bagi Muzakki.
-
-### 3. Kalkulator & Pembayaran Zakat
-
-- Method: GET
-- Endpoint: /hitung-zakat
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@calculator
-- Kegunaan: Menampilkan form kalkulasi nisab Zakat Maal (Emas/Tabungan/Perdagangan) dan Zakat Fitrah.
-
-- Method: GET
-- Endpoint: /bayar-zakat
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@pay
-- Kegunaan: Menampilkan halaman checkout pembayaran zakat (pilihan Midtrans QRIS atau Transfer Bank).
-
-- Method: POST
-- Endpoint: /bayar-zakat
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@storePay
-- Kegunaan: Memproses data pembayaran zakat baru, membuat record pembayaran, dan menghasilkan Midtrans Snap Token untuk pembayaran online.
-
-- Method: GET
-- Endpoint: /riwayat-pembayaran
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@history
-- Kegunaan: Menampilkan daftar riwayat pembayaran zakat milik akun yang sedang login.
-
-- Method: GET
-- Endpoint: /riwayat-pembayaran/check/{payment}
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@checkStatus
-- Kegunaan: Memeriksa status transaksi pembayaran secara manual ke API Server Midtrans dan mengupdate status lokal jika sudah terbayar.
-
-- Method: GET
-- Endpoint: /struk/{payment}
-- Middleware: auth
-- Action: App\Http\Controllers\ZakatController@receipt
-- Kegunaan: Menampilkan dan mencetak bukti pembayaran sah (struk kuitansi zakat).
-
-### 4. Permohonan Bantuan Mustahik
-
-- Method: GET
-- Endpoint: /mustahik/apply
-- Middleware: auth
-- Action: App\Http\Controllers\MustahikApplicationController@apply
-- Kegunaan: Menampilkan form pengajuan permohonan bantuan zakat online bagi Mustahik.
-
-- Method: POST
-- Endpoint: /mustahik/apply
-- Middleware: auth
-- Action: App\Http\Controllers\MustahikApplicationController@storeApply
-- Kegunaan: Mengunggah berkas SKTM/KTP, memvalidasi input, dan menyimpan permohonan ke database dengan status "Menunggu Verifikasi".
-
-- Method: GET
-- Endpoint: /mustahik/my-applications
-- Middleware: auth
-- Action: App\Http\Controllers\MustahikApplicationController@myApplications
-- Kegunaan: Menampilkan daftar permohonan bantuan yang pernah diajukan beserta status verifikasi dari Amil.
-
-### 5. Laporan Keuangan & Cetak PDF
-
-- Method: GET
-- Endpoint: /reports/financial/print
-- Middleware: auth
-- Action: App\Http\Controllers\ExportReportController@financialReport
-- Kegunaan: Menyusun rekapitulasi mutasi kas, saldo terhimpun, saldo disalurkan, dan rincian alokasi 8 Asnaf ke dalam bentuk halaman dokumen PDF yang siap dicetak.
-
-### 6. Admin Panel (Filament Dashboard)
-
-- Path Base: /admin
-- Middleware: auth (Role Admin / Petugas)
-- Resources:
-  - /admin/payments: Pengelolaan dan verifikasi manual transaksi pembayaran zakat.
-  - /admin/distributions: Pengelolaan penyaluran dana zakat ke Mustahik per kategori Asnaf (dilengkapi validasi cek saldo).
-  - /admin/zakat-ledgers: Audit trail mutasi buku kas zakat (Credit & Debit).
-  - /admin/mustahik-applications: Verifikasi, persetujuan, penolakan, dan aksi penyaluran permohonan bantuan Mustahik.
-  - /admin/users: Pengelolaan akun pengguna dan role hak akses.
-  - /admin/settings: Pengaturan parameter sistem, nisab emas, nominal zakat fitrah, dan QRIS statis.
-  - /admin/audit-logs: Log pencatatan aktivitas audit trail.
+```
++-------------------+       +-----------------------+       +-------------------------+
+|   Muzakki / User  | ----> |   Midtrans Gateway    | ----> |   Webhook Controller    |
+| (Input Zakat Maal)|       | (Snap / Dynamic QRIS) |       | (/api/midtrans/notif)   |
++-------------------+       +-----------------------+       +-------------------------+
+                                                                         |
+                                                                         v
++-------------------+       +-----------------------+       +-------------------------+
+| Mustahik Portal   |       |  Double-Entry Ledger  | <---- | Signature Key & Status  |
+| (/mustahik/apply) |       | (ZakatFundService)    |       | Verification Engine     |
++-------------------+       +-----------------------+       +-------------------------+
+          |                             |
+          v                             v
++-------------------------------------------------------------------------------------+
+|                     Filament Admin Panel & PDF Financial Report                     |
++-------------------------------------------------------------------------------------+
+```
 
 ---
 
-## Struktur Database Utama
+## Ringkasan Fitur & Capability Matrix
 
-- users: Data akun pengurus, petugas, dan muzakki.
-- payments: Data transaksi penerimaan zakat dari Muzakki.
-- distributions: Data penyaluran zakat ke Mustahik berdasarkan 8 Asnaf.
-- zakat_ledgers: Buku kas umum pencatatan mutasi kas (Credit/Debit).
-- mustahik_applications: Data pengajuan bantuan Mustahik online beserta berkas pendukung.
-- settings: Parameter konfigurasi organisasi dan acuan nisab zakat.
-- audit_logs: Catatan jejak audit aktivitas administrator.
-
----
-
-## Panduan Instalasi & Jalankan Sistem
-
-1. Clone Repository:
-   git clone git@github.com:qannn0607/baitul-mal.git
-   cd baitul-mal
-
-2. Jalankan Environment Docker:
-   docker compose up -d --build
-
-3. Migration & Seeder Database:
-   docker compose exec app php artisan migrate:fresh --seed
-
-4. Akses Aplikasi:
-   - Web App: http://localhost:8000
-   - Admin Panel: http://localhost:8000/admin
+| Modul Utama | Fitur & Deskripsi | Status Engine |
+| :--- | :--- | :--- |
+| Zakat Engine | Kalkulator Nisab Emas, Tabungan, Perdagangan, dan Fitrah | ACTIVE |
+| Payment Gateway | Midtrans Snap Integration & Dynamic QRIS Payment | ACTIVE |
+| Auto-Verification | Webhook Notification Handler dengan SHA512 Signature Check | ACTIVE |
+| Core Accounting | Real-Time Double-Entry Ledger (Uang Masuk / Credit & Uang Keluar / Debit) | ACTIVE |
+| Safety Mechanism | Overdraft Prevention (Pencegahan Penyaluran Melebihi Saldo) | ACTIVE |
+| Mustahik Portal | Permohonan Bantuan Online, Upload SKTM, Tracking Status Real-time | ACTIVE |
+| Admin Panel | Filament Dashboard, Approval Action, Audit Logging, User Role Management | ACTIVE |
+| Financial Report | Printable Executive PDF Report & Breakdown 8 Kategori Asnaf | ACTIVE |
 
 ---
 
-## Pengujian Otomatis (Testing)
+## Spesifikasi API & Endpoint Webhook
 
-Jalankan perintah pengujian fitur dan unit test untuk memastikan seluruh modul berfungsi dengan benar:
+### 1. Midtrans Webhook Notification Callback
 
+- Protocol: HTTP POST
+- Endpoint: `/api/midtrans/notification`
+- Authentication: Excluded CSRF, Signature Key Hash Validation (SHA-512)
+- Header: `Content-Type: application/json`
+
+Payload Request (Dari Server Midtrans):
+```json
+{
+  "transaction_status": "settlement",
+  "order_id": "TRX-00042",
+  "gross_amount": "1500000.00",
+  "status_code": "200",
+  "signature_key": "a8f...9c2",
+  "payment_type": "qris"
+}
+```
+
+Respon Sistem (Status 200 OK):
+```json
+{
+  "status": "success",
+  "message": "Payment verified and recorded into Zakat Ledger"
+}
+```
+
+Mekanisme Internal Webhook:
+1. Sistem menghitung Hash SHA512: `SHA512(order_id + status_code + gross_amount + ServerKey)`.
+2. Jika Signature cocok dan status `settlement` atau `capture`:
+   - Mengubah status tabel `payments` menjadi `Transaksi Sukses`.
+   - Mengisi `verified_at` dan `payment_method`.
+   - Menjalankan `ZakatFundService::recordPaymentCredit()` untuk menambah transaksi Uang Masuk pada `zakat_ledgers`.
+
+---
+
+### 2. Katalog Endpoint Aplikasi (Routing Table)
+
+#### A. Autentikasi & Portal Muzakki
+
+| Method | Endpoint Route | Middleware | Controller Action | Fungsi & Response |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/` | Guest/Auth | Closure | Landing page perkenalan platform & transparansi publik |
+| GET | `/dashboard` | auth | `ZakatController@dashboard` | Dashboard Muzakki, summary saldo, & distribusi 8 asnaf |
+| GET | `/hitung-zakat` | auth | `ZakatController@calculator` | Interface kalkulator nisab zakat Maal & Fitrah |
+| GET | `/bayar-zakat` | auth | `ZakatController@pay` | Form pembayaraan zakat online |
+| POST | `/bayar-zakat` | auth | `ZakatController@storePay` | Generasi Snap Token Midtrans & reservasi transaksi |
+| GET | `/riwayat-pembayaran` | auth | `ZakatController@history` | Tabel histori pembayaran zakat milik user |
+| GET | `/riwayat-pembayaran/check/{payment}` | auth | `ZakatController@checkStatus` | Manual ping status transaksi ke API Midtrans |
+| GET | `/struk/{payment}` | auth | `ZakatController@receipt` | Tampilan kuitansi digital bukti pembayaran sah |
+
+#### B. Portal Layanan Mustahik
+
+| Method | Endpoint Route | Middleware | Controller Action | Fungsi & Response |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/mustahik/apply` | auth | `MustahikApplicationController@apply` | Form pengajuan permohonan zakat online |
+| POST | `/mustahik/apply` | auth | `MustahikApplicationController@storeApply` | Upload SKTM/KTP & penyimpanan permohonan |
+| GET | `/mustahik/my-applications` | auth | `MustahikApplicationController@myApplications` | Tracking status verifikasi & keputusan Amil |
+
+#### C. Laporan Keuangan & Admin Panel
+
+| Method | Endpoint Route | Middleware | Controller Action | Fungsi & Response |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/reports/financial/print` | auth | `ExportReportController@financialReport` | Cetak PDF Laporan Mutasi Kas & Breakdown 8 Asnaf |
+| GET | `/admin/*` | auth (admin) | Filament Panel | Dashboard admin, kelola pembayaran, penyaluran, & ledger |
+
+---
+
+## Skema Database & Relasi Tabel
+
+```
+  +------------------+         +------------------+         +------------------+
+  |      users       |         |     payments     |         |  distributions   |
+  +------------------+         +------------------+         +------------------+
+  | id (PK)          | <-----+ | id (PK)          |         | id (PK)          |
+  | name             |         | user_id (FK)     |         | program_name     |
+  | email            |         | amount           |         | asnaf            |
+  | role             |         | payment_type     |         | recipient_name   |
+  | created_at       |         | status           |         | amount           |
+  +------------------+         | snap_token       |         | distributed_by   |
+                               +------------------+         +------------------+
+                                        |                            |
+                                        v                            v
+                               +-----------------------------------------------+
+                               |                 zakat_ledgers                 |
+                               +-----------------------------------------------+
+                               | id (PK)                                       |
+                               | type ('credit' | 'debit')                     |
+                               | amount                                        |
+                               | balance_after                                 |
+                               | description                                   |
+                               | payment_id (FK, Nullable)                     |
+                               | distribution_id (FK, Nullable)                |
+                               +-----------------------------------------------+
+```
+
+---
+
+## Panduan Deployment & Instalasi
+
+### 1. Persyaratan Sistem
+- Docker Engine 24.x+ & Docker Compose v2.x+
+- Git 2.x+
+
+### 2. Langkah Instalasi Lingkungan Lokal
+
+Kloning repositori proyek:
+```bash
+git clone git@github.com:qannn0607/baitul-mal.git
+cd baitul-mal
+```
+
+Jalankan container aplikasi dengan Docker Compose:
+```bash
+docker compose up -d --build
+```
+
+Jalankan migrasi database dan penyemaian data awal:
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+Pengaturan Symlink Storage (Media & Berkas SKTM):
+```bash
+docker compose exec app php artisan storage:link
+```
+
+---
+
+## Pengujian Otomatis (Automated Test Suite)
+
+Sistem ini dilengkapi dengan unit test dan feature test komprehensif yang mencakup seluruh alur transaksi, enkripsi webhook, kalkulasi saldo ledger, hingga otorisasi admin.
+
+Perintah Menjalankan Test Suite:
+```bash
 docker compose exec app php artisan test
+```
 
-Seluruh 47 pengujian fitur (Payment, Ledger, Distribution, Mustahik, Report Export, Admin Panel) telah dinyatakan lulus (PASS).
+Hasil Pengujian Terakhir:
+```
+PASS  Tests\Unit\ExampleTest
+PASS  Tests\Feature\AdminPanelTest
+PASS  Tests\Feature\Auth\AuthenticationTest
+PASS  Tests\Feature\Auth\EmailVerificationTest
+PASS  Tests\Feature\Auth\PasswordConfirmationTest
+PASS  Tests\Feature\Auth\PasswordResetTest
+PASS  Tests\Feature\Auth\PasswordUpdateTest
+PASS  Tests\Feature\Auth\RegistrationTest
+PASS  Tests\Feature\DistributionTest
+PASS  Tests\Feature\ExampleTest
+PASS  Tests\Feature\FinancialReportTest
+PASS  Tests\Feature\MidtransPaymentTest
+PASS  Tests\Feature\MustahikApplicationTest
+PASS  Tests\Feature\ProfileTest
+PASS  Tests\Feature\ZakatTest
+
+Tests: 47 passed (99 assertions)
+Duration: 4.09s
+Status: ALL PASSED (100%)
+```
+
+---
+
+## Lisensi & Kontribusi
+
+Pengembangan sistem Baitul Maal dilakukan secara privat untuk pengelolaan dana zakat yang transparan dan profesional. Hak cipta dilindungi undang-undang.
