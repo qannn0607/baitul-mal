@@ -72,7 +72,7 @@ class PaymentResource extends Resource
 
                 Forms\Components\Textarea::make('rejection_reason')
                     ->label('Alasan Penolakan (Jika Status Ditolak)')
-                    ->visible(fn (Forms\Get $get) => $get('status') === 'Ditolak')
+                    ->visible(fn ($get) => $get('status') === 'Ditolak')
                     ->columnSpanFull(),
 
                 Forms\Components\FileUpload::make('proof_image')
