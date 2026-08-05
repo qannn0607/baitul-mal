@@ -80,14 +80,14 @@ class DistributionResource extends Resource
                     ->prefix('Rp')
                     ->minValue(1000)
                     ->maxValue(function ($record) {
-                        return static::getAvailableBalance($record?->id);
+                        return \App\Services\ZakatFundService::getCurrentBalance($record?->id);
                     })
                     ->validationMessages([
-                        'max' => 'Nominal penyaluran melebihi saldo terhimpun yang tersedia. Saldo zakat tidak mencukupi.',
+                        'max' => 'Nominal penyaluran melebihi saldo terhimpun yang tersedia pada Buku Kas. Saldo zakat tidak mencukupi.',
                     ])
                     ->helperText(function ($record) {
-                        $balance = static::getAvailableBalance($record?->id);
-                        return 'Saldo terhimpun (transaksi sukses) yang tersedia disalurkan saat ini: Rp ' . number_format($balance, 0, ',', '.');
+                        $balance = \App\Services\ZakatFundService::getCurrentBalance($record?->id);
+                        return 'Saldo Kas Zakat Terhimpun yang tersedia untuk disalurkan saat ini: Rp ' . number_format($balance, 0, ',', '.');
                     })
                     ->placeholder('Contoh: 1500000')
                     ->label('Nominal Penyaluran (Rp)'),

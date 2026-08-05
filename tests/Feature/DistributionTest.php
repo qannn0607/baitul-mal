@@ -26,6 +26,15 @@ class DistributionTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
+        // Buat Pembayaran Sukses Dulu agar Saldo Kas Mencukupi
+        Payment::create([
+            'user_id' => $admin->id,
+            'sender_name' => 'Donatur A',
+            'title' => 'Zakat Maal',
+            'amount' => 2000000,
+            'status' => 'Transaksi Sukses',
+        ]);
+
         $distribution = Distribution::create([
             'program_name' => 'Bantuan Beasiswa Pendidikan Santri',
             'asnaf' => 'Fisabilillah',
@@ -84,6 +93,14 @@ class DistributionTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'user']);
         $admin = User::factory()->create(['role' => 'admin']);
+
+        Payment::create([
+            'user_id' => $user->id,
+            'sender_name' => 'Donatur B',
+            'title' => 'Zakat Fitrah',
+            'amount' => 1000000,
+            'status' => 'Transaksi Sukses',
+        ]);
 
         Distribution::create([
             'program_name' => 'Paket Sembako Fakir',

@@ -25,6 +25,17 @@ class Distribution extends Model
         'distribution_date' => 'date',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function (Distribution $distribution) {
+            \App\Services\ZakatFundService::recordDistributionDebit($distribution);
+        });
+
+        static::deleted(function (Distribution $distribution) {
+            \App\Services\ZakatFundService::removeDistributionDebit($distribution);
+        });
+    }
+
     public function amil(): BelongsTo
     {
         return $this->belongsTo(User::class, 'distributed_by');

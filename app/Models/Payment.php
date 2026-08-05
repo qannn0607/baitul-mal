@@ -30,6 +30,21 @@ class Payment extends Model
         'distributed_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function (Payment $payment) {
+            if (in_array($payment->status, ['Transaksi Sukses', 'Sudah Disalurkan'])) {
+                \App\Services\ZakatFundService::recordPaymentCredit($payment);
+            } else {
+                \App\Services\ZakatFundService::removePaymentCredit($payment);
+            }
+        });
+
+        static::deleted(function (Payment $payment) {
+            \App\Services\ZakatFundService::removePaymentCredit($payment);
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

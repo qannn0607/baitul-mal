@@ -188,5 +188,8 @@ class DatabaseSeeder extends Seeder
                 'distributed_by' => $petugas->id,
             ]
         );
+
+        // 8. Sync Zakat Fund Ledger Balance
+        \App\Services\ZakatFundService::recalculateBalance();
     }
 }
