@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Distribution;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\Services\MidtransService;
@@ -38,13 +39,31 @@ class ZakatController extends Controller
             ->take(5)
             ->get();
 
+        // Transparency & Distribution Stats (Global 8 Asnaf)
+        $totalCollectedGlobal = Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])->sum('amount');
+        $totalDistributedGlobal = Distribution::sum('amount');
+        $remainingBalanceGlobal = max(0, $totalCollectedGlobal - $totalDistributedGlobal);
+
+        $asnafList = ['Fakir', 'Miskin', 'Amil', 'Muallaf', 'Riqab', 'Gharim', 'Fisabilillah', 'Ibnu Sabil'];
+        $asnafBreakdown = [];
+        foreach ($asnafList as $asnafName) {
+            $asnafBreakdown[$asnafName] = Distribution::where('asnaf', $asnafName)->sum('amount');
+        }
+
+        $recentDistributions = Distribution::with('amil')->latest('distribution_date')->take(5)->get();
+
         return view('dashboard', compact(
             'user',
             'totalPaid',
             'pendingCount',
             'verifiedCount',
             'distributedCount',
-            'recentPayments'
+            'recentPayments',
+            'totalCollectedGlobal',
+            'totalDistributedGlobal',
+            'remainingBalanceGlobal',
+            'asnafBreakdown',
+            'recentDistributions'
         ));
     }
 

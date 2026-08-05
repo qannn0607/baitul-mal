@@ -148,5 +148,45 @@ class DatabaseSeeder extends Seeder
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mozilla/5.0',
         ]);
+
+        // 7. Sample Distributions (8 Asnaf)
+        \App\Models\Distribution::updateOrCreate(
+            ['id' => 1],
+            [
+                'program_name' => 'Program Paket Sembako Dhuafa',
+                'asnaf' => 'Fakir',
+                'recipient_name' => 'Keluarga Ibu Maryam (Fakir)',
+                'amount' => 500000,
+                'distribution_date' => now()->subDays(4),
+                'notes' => 'Penyaluran sembako bahan pokok pangan bulanan.',
+                'distributed_by' => $admin->id,
+            ]
+        );
+
+        \App\Models\Distribution::updateOrCreate(
+            ['id' => 2],
+            [
+                'program_name' => 'Beasiswa Santri Penghafal Al-Qur\'an',
+                'asnaf' => 'Fisabilillah',
+                'recipient_name' => 'Santri Rumah Tahfidz Syuhada',
+                'amount' => 750000,
+                'distribution_date' => now()->subDays(3),
+                'notes' => 'Bantuan perlengkapan belajar & SPP santri.',
+                'distributed_by' => $admin->id,
+            ]
+        );
+
+        \App\Models\Distribution::updateOrCreate(
+            ['id' => 3],
+            [
+                'program_name' => 'Bantuan Biaya Pengobatan Darurat',
+                'asnaf' => 'Miskin',
+                'recipient_name' => 'Bapak Supardi (Miskin)',
+                'amount' => 400000,
+                'distribution_date' => now()->subDays(1),
+                'notes' => 'Penyaluran zakat untuk pengobatan rawat inap.',
+                'distributed_by' => $petugas->id,
+            ]
+        );
     }
 }
