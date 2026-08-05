@@ -23,6 +23,20 @@
              imagePreview: null,
              uploadProgress: 0,
              isSubmitting: false,
+             rawAmount: '{{ old('amount', $presetAmount) }}',
+             displayAmount: '',
+
+             formatAmountInput(val) {
+                 let clean = (val || '').toString().replace(/\D/g, '');
+                 this.rawAmount = clean;
+                 this.displayAmount = clean ? new Intl.NumberFormat('id-ID').format(clean) : '';
+             },
+
+             init() {
+                 if (this.rawAmount) {
+                     this.formatAmountInput(this.rawAmount);
+                 }
+             },
 
              handleFileSelect(event) {
                  const file = event.target.files[0];
@@ -164,10 +178,17 @@
 
                     <!-- Nominal Pembayaran -->
                     <div>
-                        <x-input-label for="amount" value="Nominal Pembayaran (Rp)" />
+                        <x-input-label for="amount_display" value="Nominal Pembayaran (Rp)" />
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-bold text-slate-400">Rp</span>
-                            <input id="amount" type="number" name="amount" value="{{ old('amount', $presetAmount) }}" required placeholder="Contoh: 250000" class="w-full pl-9 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 shadow-xs">
+                            <input type="hidden" name="amount" :value="rawAmount">
+                            <input id="amount_display" 
+                                   type="text" 
+                                   x-model="displayAmount" 
+                                   @input="formatAmountInput($event.target.value)" 
+                                   required 
+                                   placeholder="Contoh: 250.000" 
+                                   class="w-full pl-9 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 shadow-xs font-semibold">
                         </div>
                         @error('amount')
                             <span class="text-xs text-rose-500 font-semibold mt-1 block">{{ $message }}</span>
