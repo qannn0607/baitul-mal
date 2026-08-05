@@ -39,16 +39,16 @@
 
         <!-- HEADER TITLE -->
         <div class="space-y-1">
-            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Form Pembayaran Zakat</h1>
+            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Form Pembayaran Zakat</h1>
             <p class="text-xs text-slate-500 dark:text-slate-400">
-                Pilih metode pembayaran **Instant Online via Midtrans (QRIS/VA)** atau **Transfer Bank Manual**.
+                Pilih metode pembayaran <span class="font-semibold text-slate-700 dark:text-slate-300">Instant Online via Midtrans (QRIS/VA)</span> atau <span class="font-semibold text-slate-700 dark:text-slate-300">Transfer Bank Manual</span>.
             </p>
         </div>
 
         <!-- TWO-COLUMN LAYOUT -->
         <div class="grid lg:grid-cols-12 gap-6 items-start">
             
-            <!-- LEFT COLUMN: QRIS & BANK ACCOUNTS -->
+            <!-- LEFT COLUMN: METHOD SELECTOR & INFO -->
             <div class="lg:col-span-5 space-y-4">
                 
                 <!-- PAYMENT METHOD SELECTOR CARD -->
@@ -60,20 +60,32 @@
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button" 
                                 @click="paymentTab = 'midtrans'" 
-                                :class="paymentTab === 'midtrans' ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold' : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'"
-                                class="p-3 rounded-lg border text-xs text-center transition-all">
-                            <span class="block text-sm mb-0.5">Online Instant</span>
-                            <span class="text-[10px] opacity-75">Midtrans QRIS / VA</span>
+                                :class="paymentTab === 'midtrans' ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 font-bold ring-1 ring-emerald-600' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'"
+                                class="p-3 rounded-lg border text-xs text-center transition-all cursor-pointer">
+                            <span class="block text-sm font-bold mb-0.5">Online Instant</span>
+                            <span class="text-[10px] opacity-80">Midtrans QRIS / VA</span>
                         </button>
 
                         <button type="button" 
                                 @click="paymentTab = 'manual'" 
-                                :class="paymentTab === 'manual' ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold' : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'"
-                                class="p-3 rounded-lg border text-xs text-center transition-all">
-                            <span class="block text-sm mb-0.5">Transfer Manual</span>
-                            <span class="text-[10px] opacity-75">Upload Resi Foto</span>
+                                :class="paymentTab === 'manual' ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 font-bold ring-1 ring-emerald-600' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'"
+                                class="p-3 rounded-lg border text-xs text-center transition-all cursor-pointer">
+                            <span class="block text-sm font-bold mb-0.5">Transfer Manual</span>
+                            <span class="text-[10px] opacity-80">Upload Resi Foto</span>
                         </button>
                     </div>
+                </div>
+
+                <!-- INFO CARD FOR MIDTRANS METHOD -->
+                <div x-show="paymentTab === 'midtrans'" x-transition class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl space-y-2 shadow-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <h4 class="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Metode Instant Midtrans Gateway</h4>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Dengan metode ini, Anda dapat membayar menggunakan <strong class="font-semibold text-slate-900 dark:text-white">Dynamic QRIS, Virtual Account (BSI, Mandiri, BCA, BRI, BNI), E-Wallet, atau Bank Transfer</strong>. 
+                        Status pembayaran akan <strong class="font-semibold text-emerald-600 dark:text-emerald-400">diverifikasi otomatis oleh sistem</strong> secara realtime tanpa perlu mengunggah struk!
+                    </p>
                 </div>
 
                 <!-- QRIS & BANK CARD FOR MANUAL METHOD -->
@@ -102,7 +114,7 @@
                                     <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 block">{{ $acc['bank_name'] ?? 'Bank Syariah' }}</span>
                                     <div class="flex items-center justify-between">
                                         <span class="text-base font-extrabold text-slate-900 dark:text-white tracking-wide">{{ $acc['account_number'] ?? '-' }}</span>
-                                        <button type="button" @click="navigator.clipboard.writeText('{{ $acc['account_number'] ?? '' }}'); window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Nomor rekening berhasil disalin!', type: 'success' } }))" class="px-2 py-0.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[11px] font-bold rounded text-slate-700 dark:text-slate-300 hover:bg-slate-100">
+                                        <button type="button" @click="navigator.clipboard.writeText('{{ $acc['account_number'] ?? '' }}'); window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Nomor rekening berhasil disalin!', type: 'success' } }))" class="px-2 py-0.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[11px] font-bold rounded text-slate-700 dark:text-slate-300 hover:bg-slate-100 cursor-pointer">
                                             Salin
                                         </button>
                                     </div>
@@ -111,15 +123,6 @@
                             @endforeach
                         </div>
                     </div>
-                </div>
-
-                <!-- INFO CARD FOR MIDTRANS METHOD -->
-                <div x-show="paymentTab === 'midtrans'" x-transition class="bg-emerald-950/20 border border-emerald-800/40 p-5 rounded-xl space-y-2">
-                    <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Metode Instant Midtrans Gateway</h4>
-                    <p class="text-xs text-slate-300 leading-relaxed">
-                        Dengan metode ini, Anda dapat membayar menggunakan **Dynamic QRIS, Virtual Account (BSI, Mandiri, BCA, BRI, BNI), E-Wallet, atau Bank Transfer**. 
-                        Status pembayaran akan **diverifikasi otomatis oleh sistem** secara realtime tanpa perlu upload struk!
-                    </p>
                 </div>
 
             </div>
@@ -212,7 +215,7 @@
                     </div>
 
                     <!-- SUBMIT BUTTON -->
-                    <button type="submit" :disabled="isSubmitting" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+                    <button type="submit" :disabled="isSubmitting" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer">
                         <template x-if="!isSubmitting">
                             <span x-text="paymentTab === 'midtrans' ? 'Lanjutkan Pembayaran Online (Midtrans)' : 'Kirim Bukti Pembayaran Manual'"></span>
                         </template>
