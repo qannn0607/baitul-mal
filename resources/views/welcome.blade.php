@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,17 +29,53 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
+
+        /* Transisi awal saat web pertama diakses (staggered, lebih aesthetic) */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeScaleIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .entrance-header {
+            animation: fadeSlideDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .entrance-badge {
+            animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.15s;
+        }
+        .entrance-title {
+            animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.28s;
+        }
+        .entrance-desc {
+            animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.4s;
+        }
+        .entrance-buttons {
+            animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.52s;
+        }
+        .entrance-card {
+            animation: fadeScaleIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.5s;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-600 selection:text-white transition-colors duration-200">
 
     <!-- NAVIGATION HEADER -->
-    <header class="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+    <header class="entrance-header sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-xs">
-                    BM
-                </div>
+                <img src="{{ asset('img/logo-baitulmal.png') }}" alt="Logo Baitul Maal" class="w-8 h-8 rounded-lg object-cover">
                 <div>
                     <span class="font-extrabold text-sm tracking-wide text-slate-900 dark:text-white block leading-none">BAITUL MAAL</span>
                     <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sistem Zakat Digital</span>
@@ -83,25 +119,59 @@
     </header>
 
     <!-- HERO SECTION -->
-    <section id="hero" class="py-12 lg:py-20 border-b border-slate-200 dark:border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+        id="hero"
+        class="relative py-16 lg:py-24 border-b border-slate-200 dark:border-slate-800 bg-slate-900 overflow-hidden scroll-mt-16"
+        x-data="{
+            slide: 0,
+            animate: true,
+            start() {
+                setInterval(() => {
+                    this.animate = true;
+                    this.slide++;
+                    if (this.slide === 2) {
+                        setTimeout(() => {
+                            this.animate = false;
+                            this.slide = 0;
+                        }, 1500);
+                    }
+                }, 3000);
+            }
+        }"
+        x-init="start()"
+    >
+        <!-- Background slider (auto-scroll searah, loop mulus) -->
+        <div class="absolute inset-0 flex w-[300%] h-full ease-in-out"
+             :class="animate ? 'transition-transform duration-[1500ms]' : ''"
+             :style="`transform: translateX(-${slide * (100/3)}%);`">
+            <div class="w-1/3 h-full bg-cover bg-no-repeat bg-[center_15%]"
+                 style="background-image: url('{{ asset('img/masjid_raya_bg.jpg') }}');"></div>
+            <div class="w-1/3 h-full bg-cover bg-no-repeat bg-[center_35%]"
+                 style="background-image: url('{{ asset('img/bg-kota-banda-aceh.jpg') }}');"></div>
+            <div class="w-1/3 h-full bg-cover bg-no-repeat bg-[center_15%]"
+                 style="background-image: url('{{ asset('img/masjid_raya_bg.jpg') }}');"></div>
+        </div>
+        <!-- Overlay gradient -->
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-950/55 to-slate-950/45"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid lg:grid-cols-12 gap-8 items-center">
-                
+
                 <div class="lg:col-span-7 space-y-5 text-center lg:text-left">
-                    <span class="inline-block px-2.5 py-1 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
+                    <span class="entrance-badge inline-block px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-300 text-[11px] font-bold uppercase tracking-wider ring-1 ring-emerald-400/30">
                         Sistem Pengelolaan Zakat Digital
                     </span>
 
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+                    <h1 class="entrance-title text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight">
                         Tunaikan Zakat,<br>
-                        <span class="text-emerald-600 dark:text-emerald-400">Mudah, Aman & Transparan</span>
+                        <span class="text-emerald-400">Mudah, Aman & Transparan</span>
                     </h1>
 
-                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    <p class="entrance-desc text-sm sm:text-base text-slate-200 max-w-xl mx-auto lg:mx-0 leading-relaxed">
                         Baitul Maal mempermudah perhitungan dan penyaluran zakat Maal, Penghasilan, dan Fitrah secara tepat sasaran kepada yang berhak.
                     </p>
 
-                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+                    <div class="entrance-buttons pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
                         @auth
                             <a href="{{ route('zakat.calculator') }}" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm transition-colors text-center">
                                 Hitung & Bayar Zakat
@@ -111,7 +181,7 @@
                                 Mulai Sekarang
                             </a>
                         @endauth
-                        <a href="#cara-kerja" class="w-full sm:w-auto px-6 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center">
+                        <a href="#cara-kerja" class="w-full sm:w-auto px-6 py-3 bg-white/10 backdrop-blur border border-white/20 text-white font-bold text-xs rounded-lg hover:bg-white/20 transition-colors text-center">
                             Pelajari Cara Kerja
                         </a>
                     </div>
@@ -119,7 +189,7 @@
 
                 <!-- Hero Graphic Card -->
                 <div class="lg:col-span-5 flex justify-center">
-                    <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-xs space-y-4">
+                    <div class="entrance-card w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-lg space-y-4">
                         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
                             <div>
                                 <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Metode Pembayaran</span>
@@ -157,7 +227,7 @@
     </section>
 
     <!-- STATISTIK SECTION -->
-    <section id="statistik" class="py-12 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+    <section id="statistik" class="py-12 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 scroll-mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center" 
                  x-data="{ 
@@ -192,7 +262,7 @@
     </section>
 
     <!-- CARA KERJA SECTION -->
-    <section id="cara-kerja" class="py-16">
+    <section id="cara-kerja" class="py-16 scroll-mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div class="text-center max-w-2xl mx-auto space-y-2">
                 <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Alur Praktis</span>
@@ -231,7 +301,7 @@
     </section>
 
     <!-- KATEGORI ZAKAT SECTION -->
-    <section id="jenis-zakat" class="py-16 bg-slate-100/70 dark:bg-slate-900/60 border-y border-slate-200 dark:border-slate-800">
+    <section id="jenis-zakat" class="py-16 bg-slate-100/70 dark:bg-slate-900/60 border-y border-slate-200 dark:border-slate-800 scroll-mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div class="text-center max-w-2xl mx-auto space-y-2">
                 <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Kategori Layanan</span>
@@ -276,7 +346,7 @@
     </section>
 
     <!-- FAQ SECTION -->
-    <section id="faq" class="py-16">
+    <section id="faq" class="py-16 scroll-mt-16">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <div class="text-center space-y-1">
                 <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Pertanyaan Umum</span>
@@ -324,9 +394,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
-                        BM
-                    </div>
+                    <img src="{{ asset('img/logo-baitulmal.png') }}" alt="Logo Baitul Maal" class="w-7 h-7 rounded-lg object-cover">
                     <span class="font-extrabold text-sm text-white">BAITUL MAAL</span>
                 </div>
                 <p class="text-xs text-slate-400">
