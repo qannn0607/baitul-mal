@@ -120,7 +120,7 @@
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs border border-slate-300 dark:border-slate-700 rounded-lg transition-colors">
-                        Masuk User / Admin
+                        Masuk
                     </a>
                     <a href="{{ route('register') }}" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg shadow-sm transition-colors">
                         Daftar Akun
@@ -138,7 +138,7 @@
                 <a href="#berita" class="hover:text-amber-300 py-3 border-b-2 border-transparent hover:border-amber-400 transition-colors">Kabar & Berita Penyaluran</a>
                 <a href="#layanan" class="hover:text-amber-300 py-3 border-b-2 border-transparent hover:border-amber-400 transition-colors">Layanan Zakat</a>
                 <a href="#asnaf" class="hover:text-amber-300 py-3 border-b-2 border-transparent hover:border-amber-400 transition-colors">Transparansi 8 Asnaf</a>
-                <a href="#laporan" class="hover:text-amber-300 py-3 border-b-2 border-transparent hover:border-amber-400 transition-colors">Laporan Keuangan PDF</a>
+                <a href="{{ route('reports.financial.print') }}" target="_blank" class="hover:text-amber-300 py-3 border-b-2 border-transparent hover:border-amber-400 transition-colors">Cetak Laporan Keuangan PDF</a>
                 <a href="#faq" class="hover:text-amber-300 py-3 border-b-2 border-transparent hover:border-amber-400 transition-colors">FAQ & Konsultasi</a>
             </div>
             <div class="hidden lg:flex items-center gap-2 text-[11px] text-emerald-200">
@@ -248,48 +248,55 @@
     </section>
 
     <!-- REAL-TIME STATISTIK PENGELOLAAN DANA ZAKAT -->
-    <section class="py-10 bg-emerald-900 text-white border-b border-emerald-950">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <span class="px-3 py-1 bg-emerald-800 text-emerald-200 text-[10px] font-bold uppercase tracking-widest rounded">DATA TERKINI REAL-TIME</span>
-                <h3 class="text-xl sm:text-2xl font-black text-white mt-2 uppercase">Statistik Pengumpulan & Penyaluran Zakat</h3>
+    <section class="py-14 bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-950 text-white relative overflow-hidden border-b border-emerald-950 shadow-inner">
+        <!-- Subtle Islamic Geometric Pattern Backdrop -->
+        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:18px_18px]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-800/80 text-amber-300 text-[10px] font-extrabold uppercase tracking-widest rounded-full border border-emerald-700">
+                    <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                    <span>Transparansi Real-Time Amil Zakat</span>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">Statistik Pengumpulan & Penyaluran Zakat</h3>
+                <p class="text-xs text-emerald-200">Pencatatan mutasi kas terverifikasi secara akuntabel melalui Sistem Buku Kas Ganda (Double-Entry Ledger)</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Stat 1 -->
-                <div class="bg-emerald-800/80 p-6 rounded-2xl border border-emerald-700 shadow-md text-center">
-                    <p class="text-xs font-bold text-emerald-200 uppercase tracking-wider">Total Zakat Terhimpun</p>
-                    <p class="text-2xl sm:text-3xl font-black text-amber-400 mt-2">
+                <div class="bg-emerald-900/60 backdrop-blur-md p-6 rounded-2xl border border-emerald-700/60 shadow-xl text-center space-y-2 relative group hover:border-amber-400 transition-colors">
+                    <p class="text-xs font-extrabold text-emerald-200 uppercase tracking-wider">Total Zakat Terhimpun</p>
+                    <p class="text-2xl sm:text-3xl font-black text-amber-400">
                         Rp {{ number_format($totalCollected ?? 0, 0, ',', '.') }}
                     </p>
-                    <p class="text-[10px] text-emerald-300 mt-1">Penerimaan Sah dari Muzakki</p>
+                    <p class="text-[10px] text-emerald-300">Penerimaan Sah dari Muzakki</p>
                 </div>
 
                 <!-- Stat 2 -->
-                <div class="bg-emerald-800/80 p-6 rounded-2xl border border-emerald-700 shadow-md text-center">
-                    <p class="text-xs font-bold text-emerald-200 uppercase tracking-wider">Total Penyaluran (8 Asnaf)</p>
-                    <p class="text-2xl sm:text-3xl font-black text-emerald-300 mt-2">
+                <div class="bg-emerald-900/60 backdrop-blur-md p-6 rounded-2xl border border-emerald-700/60 shadow-xl text-center space-y-2 relative group hover:border-emerald-400 transition-colors">
+                    <p class="text-xs font-extrabold text-emerald-200 uppercase tracking-wider">Total Penyaluran (8 Asnaf)</p>
+                    <p class="text-2xl sm:text-3xl font-black text-emerald-300">
                         Rp {{ number_format($totalDistributed ?? 0, 0, ',', '.') }}
                     </p>
-                    <p class="text-[10px] text-emerald-300 mt-1">Disalurkan Kepada Mustahik</p>
+                    <p class="text-[10px] text-emerald-300">Disalurkan Kepada Mustahik</p>
                 </div>
 
                 <!-- Stat 3 -->
-                <div class="bg-emerald-800/80 p-6 rounded-2xl border border-emerald-700 shadow-md text-center">
-                    <p class="text-xs font-bold text-emerald-200 uppercase tracking-wider">Sisa Saldo Kas Aktif</p>
-                    <p class="text-2xl sm:text-3xl font-black text-white mt-2">
+                <div class="bg-emerald-900/60 backdrop-blur-md p-6 rounded-2xl border border-emerald-700/60 shadow-xl text-center space-y-2 relative group hover:border-white transition-colors">
+                    <p class="text-xs font-extrabold text-emerald-200 uppercase tracking-wider">Sisa Saldo Kas Aktif</p>
+                    <p class="text-2xl sm:text-3xl font-black text-white">
                         Rp {{ number_format($currentBalance ?? 0, 0, ',', '.') }}
                     </p>
-                    <p class="text-[10px] text-emerald-300 mt-1">Buku Kas Zakat Terverifikasi</p>
+                    <p class="text-[10px] text-emerald-300">Buku Kas Zakat Terverifikasi</p>
                 </div>
 
                 <!-- Stat 4 -->
-                <div class="bg-emerald-800/80 p-6 rounded-2xl border border-emerald-700 shadow-md text-center">
-                    <p class="text-xs font-bold text-emerald-200 uppercase tracking-wider">Mustahik Penerima Manfaat</p>
-                    <p class="text-2xl sm:text-3xl font-black text-amber-400 mt-2">
+                <div class="bg-emerald-900/60 backdrop-blur-md p-6 rounded-2xl border border-emerald-700/60 shadow-xl text-center space-y-2 relative group hover:border-amber-400 transition-colors">
+                    <p class="text-xs font-extrabold text-emerald-200 uppercase tracking-wider">Mustahik Penerima Manfaat</p>
+                    <p class="text-2xl sm:text-3xl font-black text-amber-400">
                         {{ $mustahikCount ?? 0 }} <span class="text-xs text-emerald-200 font-normal">Penerima</span>
                     </p>
-                    <p class="text-[10px] text-emerald-300 mt-1">Terverifikasi SKTM / KTP</p>
+                    <p class="text-[10px] text-emerald-300">Terverifikasi SKTM / KTP</p>
                 </div>
             </div>
         </div>
@@ -428,28 +435,7 @@
         </div>
     </section>
 
-    <!-- SECTION LAPORAN KEUANGAN PDF RESMI -->
-    <section id="laporan" class="py-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-emerald-950 text-white rounded-3xl p-8 sm:p-12 border border-emerald-800 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8">
-                <div class="space-y-4 max-w-2xl text-center lg:text-left">
-                    <span class="px-3 py-1 bg-amber-500 text-slate-950 font-extrabold text-[10px] uppercase tracking-widest rounded">DOKUMEN RESMI TERVERIFIKASI</span>
-                    <h3 class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-                        Laporan Mutasi Buku Kas & Penyaluran Zakat (PDF)
-                    </h3>
-                    <p class="text-xs sm:text-sm text-emerald-200 leading-relaxed">
-                        Unduh salinan resmi laporan keuangan akuntansi ganda (Double-Entry Ledger) lengkap dengan rincian penerimaan muzakki, alokasi 8 Asnaf, serta legalitas tanda tangan pengurus & bendahara.
-                    </p>
-                </div>
-                <div class="flex flex-col sm:flex-row items-center gap-3">
-                    <a href="{{ route('reports.financial.print') }}" target="_blank" class="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-colors flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        <span>Cetak / Simpan PDF Laporan</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- SECTION FAQ ACCORDION -->
     <section id="faq" class="py-14 bg-slate-100 dark:bg-slate-950 border-b border-slate-300 dark:border-slate-800">
