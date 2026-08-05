@@ -144,6 +144,11 @@
                     Riwayat Pembayaran
                 </a>
 
+                <a href="{{ route('mustahik.apply') }}" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors {{ request()->routeIs('mustahik.*') ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    Ajukan Bantuan Mustahik
+                </a>
+
                 <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors {{ request()->routeIs('profile.edit') ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     Profil Saya
@@ -232,6 +237,9 @@
                     </a>
                     <a href="{{ route('zakat.history') }}" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold rounded-lg {{ request()->routeIs('zakat.history') ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
                         Riwayat Pembayaran
+                    </a>
+                    <a href="{{ route('mustahik.apply') }}" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold rounded-lg {{ request()->routeIs('mustahik.*') ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
+                        Ajukan Bantuan Mustahik
                     </a>
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
                         Profil Saya
