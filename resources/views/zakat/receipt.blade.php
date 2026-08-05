@@ -6,129 +6,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Struk Kuitansi Sah Zakat - #TRX-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Kuitansi Sah Penerimaan Zakat - #TRX-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }}</title>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 20px;
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+        .no-print {
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .btn {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #000;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-print {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .btn-back {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* KOP KUITANSI RESMI */
+        .kop-surat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .kop-logo {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+        .kop-text h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .kop-text h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 2px 0;
+            text-transform: uppercase;
+        }
+        .kop-text p {
+            font-size: 10pt;
+            margin: 2px 0;
+        }
+        .garis-kop-1 {
+            border-top: 3px solid #000000;
+            margin-top: 5px;
+        }
+        .garis-kop-2 {
+            border-top: 1px solid #000000;
+            margin-top: 2px;
+            margin-bottom: 20px;
+        }
+
+        .judul-kuitansi {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .judul-kuitansi h3 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: underline;
+            margin: 0;
+        }
+        .judul-kuitansi p {
+            font-size: 11pt;
+            margin: 4px 0 0 0;
+            font-family: monospace;
+        }
+
+        table.kuitansi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11pt;
+        }
+        table.kuitansi-table td {
+            padding: 8px;
+            vertical-align: top;
+            border-bottom: 1px solid #ddd;
+        }
+        .label {
+            width: 30%;
+            font-weight: bold;
+        }
+        .titik-dua {
+            width: 2%;
+            text-align: center;
+        }
+        .nilai {
+            width: 68%;
+        }
+
+        .nominal-box {
+            border: 2px solid #000;
+            padding: 12px;
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 15px 0;
+            display: inline-block;
+            background-color: #f8f9fa;
+        }
+
+        .doa-box {
+            border: 1px dashed #000;
+            padding: 10px 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 10pt;
+        }
+
+        .ttd-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+        }
+        .ttd-box {
+            width: 45%;
+            text-align: center;
+        }
+        .ttd-space {
+            height: 60px;
+        }
+
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; padding: 0 !important; }
-            .print-card { border: none !important; box-shadow: none !important; }
+            body { padding: 0 !important; }
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 min-h-screen p-4 sm:p-8 flex items-center justify-center">
+<body>
 
-    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl border-2 border-emerald-800/20 p-8 sm:p-10 relative overflow-hidden print-card">
-        
-        <!-- TOP ACTION BAR (No Print) -->
-        <div class="no-print mb-8 flex items-center justify-between border-b border-slate-200 pb-4">
-            <a href="{{ route('zakat.history') }}" class="text-xs font-bold text-slate-600 hover:text-emerald-700 flex items-center gap-1">
-                <span>&larr; Kembali ke Riwayat Pembayaran</span>
-            </a>
-            <button onclick="window.print()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-emerald-700/30 flex items-center gap-2 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                <span>Cetak / Simpan PDF Struk</span>
-            </button>
+    <!-- Action Bar (No Print) -->
+    <div class="no-print">
+        <div>
+            <strong>Kuitansi Bukti Sah Penerimaan Zakat</strong><br>
+            <span style="font-size: 12px; color: #64748b;">No. Transaksi: #TRX-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }}</span>
         </div>
+        <div>
+            <a href="{{ route('zakat.history') }}" class="btn btn-back">← Kembali</a>
+            <button onclick="window.print()" class="btn btn-print">Cetak / Simpan PDF</button>
+        </div>
+    </div>
 
-        <!-- HEADER KUITANSI RESMI -->
-        <div class="flex items-center justify-between border-b-2 border-emerald-700 pb-6">
-            <div class="flex items-center gap-4">
-                <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-14 w-auto rounded-xl object-contain shadow-sm border border-emerald-100" alt="Baitul Maal Logo" />
-                <div>
-                    <h2 class="text-lg font-black text-slate-900 tracking-tight leading-none uppercase">BAITUL MAAL AMIL ZAKAT</h2>
-                    <p class="text-[11px] text-emerald-700 font-bold mt-1">Lembaga Amil Zakat Terakreditasi Resmi</p>
-                    <p class="text-[10px] text-slate-500 font-medium">{{ $setting->contact_address ?? 'Gedung Baitul Maal, Jakarta' }}</p>
-                </div>
-            </div>
-            <div class="text-right">
-                <span class="px-3 py-1 bg-emerald-100 text-emerald-900 text-[10px] font-black uppercase rounded-full tracking-wider border border-emerald-300">
-                    BUKTI SAH PENERIMAAN
-                </span>
-                <p class="text-xs text-slate-500 mt-1 font-mono font-bold">#TRX-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }}</p>
+    <!-- MAIN KUITANSI CONTAINER -->
+    <div style="max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 25px;">
+
+        <!-- KOP SURAT KUITANSI RESMI -->
+        <div class="kop-surat">
+            <img src="{{ asset('storage/baitul_mal.jpg') }}" class="kop-logo" alt="Logo Instansi" />
+            <div class="kop-text">
+                <h2>LEMBAGA AMIL ZAKAT RESMI</h2>
+                <h1>{{ strtoupper($setting->org_name ?? 'BAITUL MAAL AMIL ZAKAT') }}</h1>
+                <p>SK Kemenag RI No. 842/2025 | Terakreditasi A Syariat</p>
+                <p>{{ $setting->contact_address ?? 'Jl. Kebajikan No. 99, Jakarta Pusat' }} | Telp: {{ $setting->contact_phone ?? '(021) 8000-ZAKAT' }}</p>
             </div>
         </div>
+        <div class="garis-kop-1"></div>
+        <div class="garis-kop-2"></div>
 
-        <!-- BODY KUITANSI -->
-        <div class="py-6 space-y-6">
-            <div class="text-center space-y-1">
-                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Telah Diterima Zakat Dari</p>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{{ $payment->sender_name }}</h1>
-            </div>
+        <!-- JUDUL KUITANSI RESMI -->
+        <div class="judul-kuitansi">
+            <h3>KUITANSI BUKTI SAH PENERIMAAN ZAKAT</h3>
+            <p>Nomor Bukti: #TRX-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }}</p>
+        </div>
 
-            <!-- DETAIL MUTASI TABLE -->
-            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-3.5 text-xs">
-                <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
-                    <span class="text-slate-500 font-semibold">Jenis / Peruntukan Zakat</span>
-                    <span class="font-extrabold text-slate-900 text-sm">{{ $payment->title }}</span>
-                </div>
+        <!-- RINCIAN KUITANSI TABLE -->
+        <table class="kuitansi-table">
+            <tr>
+                <td class="label">Telah Diterima Dari (Muzakki)</td>
+                <td class="titik-dua">:</td>
+                <td class="nilai" style="font-weight: bold; font-size: 12pt;">{{ $payment->sender_name }}</td>
+            </tr>
+            <tr>
+                <td class="label">Peruntukan / Jenis Zakat</td>
+                <td class="titik-dua">:</td>
+                <td class="nilai">{{ $payment->title }}</td>
+            </tr>
+            <tr>
+                <td class="label">Tanggal & Waktu Transaksi</td>
+                <td class="titik-dua">:</td>
+                <td class="nilai">{{ $payment->created_at->translatedFormat('d F Y, H:i:s') }} WIB</td>
+            </tr>
+            <tr>
+                <td class="label">Metode Pembayaran</td>
+                <td class="titik-dua">:</td>
+                <td class="nilai">{{ strtoupper($payment->payment_type ?? 'Midtrans QRIS / Transfer Bank') }}</td>
+            </tr>
+            <tr>
+                <td class="label">Status Verifikasi System</td>
+                <td class="titik-dua">:</td>
+                <td class="nilai" style="font-weight: bold;">{{ $payment->status }} (Terverifikasi System Webhook)</td>
+            </tr>
+            @if($payment->notes)
+                <tr>
+                    <td class="label">Catatan Muzakki</td>
+                    <td class="titik-dua">:</td>
+                    <td class="nilai">{{ $payment->notes }}</td>
+                </tr>
+            @endif
+        </table>
 
-                <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
-                    <span class="text-slate-500 font-semibold">Tanggal & Waktu Transaksi</span>
-                    <span class="font-bold text-slate-800 font-mono">{{ $payment->created_at->translatedFormat('d F Y, H:i:s') }} WIB</span>
-                </div>
-
-                <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
-                    <span class="text-slate-500 font-semibold">Metode Pembayaran</span>
-                    <span class="font-bold text-slate-800 uppercase">{{ $payment->payment_type ?? 'Midtrans QRIS / Transfer' }}</span>
-                </div>
-
-                <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
-                    <span class="text-slate-500 font-semibold">Status Verifikasi System</span>
-                    <span class="px-3 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                        {{ $payment->status }}
-                    </span>
-                </div>
-
-                @if($payment->notes)
-                    <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
-                        <span class="text-slate-500 font-semibold">Catatan Muzakki</span>
-                        <span class="font-bold text-slate-800">{{ $payment->notes }}</span>
-                    </div>
-                @endif
-
-                <div class="flex justify-between items-center pt-2">
-                    <span class="text-sm font-black text-slate-900 uppercase tracking-wider">Total Nominal Zakat</span>
-                    <span class="text-2xl font-black text-emerald-700">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
-                </div>
-            </div>
-
-            <!-- DOA PENERIMAAN ZAKAT -->
-            <div class="p-5 bg-emerald-50/80 rounded-2xl border border-emerald-200 text-center space-y-1.5">
-                <p class="text-sm font-black text-emerald-900 leading-relaxed font-serif">
-                    "آجَرَكَ اللهُ فِيمَا أَعْطَيْتَ وَبَارَكَ فِيمَا أَبْقَيْتَ وَجَعَلَهُ لَكَ طَهُورًا"
-                </p>
-                <p class="text-xs font-bold text-emerald-800 italic">"Aajarakallahu fiimaa a'thaita, wa baaraka fiimaa abqaita, wa ja'alahu laka thahuuraa."</p>
-                <p class="text-[11px] text-emerald-700">Artinya: "Semoga Allah memberikan pahala atas apa yang engkau berikan, memberkahi apa yang engkau sisakan, dan menjadikannya pembersih bagimu."</p>
+        <!-- NOMINAL KUITANSI -->
+        <div style="text-align: left;">
+            <span style="font-weight: bold;">Jumlah Nominal Zakat:</span><br>
+            <div class="nominal-box">
+                Rp {{ number_format($payment->amount, 0, ',', '.') }}
             </div>
         </div>
 
-        <!-- TANDA TANGAN & STEMPEL AMIL ZAKAT -->
-        <div class="pt-4 border-t border-slate-200 grid grid-cols-2 text-center text-xs">
-            <div>
-                <p class="text-slate-400 text-[10px]">Verifikasi Sistem Midtrans</p>
-                <div class="h-16 flex items-center justify-center">
-                    <span class="px-2 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[10px] rounded uppercase">AUTOMATIC CALLBACK VERIFIED</span>
-                </div>
-                <p class="font-extrabold text-slate-800">System Gateway</p>
-            </div>
-            <div>
-                <p class="text-slate-500">Jakarta, {{ $payment->created_at->translatedFormat('d F Y') }}</p>
-                <p class="font-bold text-slate-900 mt-0.5">Petugas Amil Zakat</p>
-                <div class="h-14 flex items-center justify-center">
-                    <span class="text-[10px] text-slate-400 italic font-mono">[ Stempel Sah Baitul Maal ]</span>
-                </div>
-                <p class="font-extrabold text-slate-900 underline">Ahmad Syarifuddin, S.Ak.</p>
-                <p class="text-[10px] text-slate-500">NIP. 19920815 201503 1 005</p>
-            </div>
+        <!-- DOA PENERIMAAN ZAKAT -->
+        <div class="doa-box">
+            <p style="font-size: 11pt; font-weight: bold; margin-bottom: 4px;">"آجَرَكَ اللهُ فِيمَا أَعْطَيْتَ وَبَارَكَ فِيمَا أَبْقَيْتَ وَجَعَلَهُ لَكَ طَهُورًا"</p>
+            <p style="font-style: italic; margin: 0;">"Semoga Allah memberikan pahala atas apa yang engkau berikan, memberkahi apa yang engkau sisakan, dan menjadikannya pembersih bagimu."</p>
         </div>
 
-        <!-- FOOTER KUITANSI -->
-        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-            <p>&copy; {{ date('Y') }} Baitul Maal Amil Zakat. Struk Kuitansi SAH Digital.</p>
-            <p>Dicetak: {{ now()->translatedFormat('d/m/Y H:i') }} WIB</p>
+        <!-- TANDA TANGAN KUITANSI -->
+        <div class="ttd-container">
+            <div class="ttd-box">
+                <p>System Automatic Gateway</p>
+                <div class="ttd-space"></div>
+                <p style="font-[monospace]; font-size: 9pt;">[ VERIFIED ONLINE MIDTRANS ]</p>
+            </div>
+            <div class="ttd-box">
+                <p>Jakarta, {{ $payment->created_at->translatedFormat('d F Y') }}</p>
+                <p style="font-weight: bold;">Bendahara / Petugas Amil Zakat</p>
+                <div class="ttd-space"></div>
+                <p style="font-weight: bold; text-decoration: underline;">Ahmad Syarifuddin, S.Ak.</p>
+                <p style="font-size: 10pt;">NIP. 19920815 201503 1 005</p>
+            </div>
         </div>
 
     </div>

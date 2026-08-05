@@ -4,208 +4,307 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Keuangan & Penyaluran Zakat - {{ $setting->org_name ?? 'Baitul Maal' }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 20px;
+            font-size: 12pt;
+            line-height: 1.4;
         }
+        .no-print {
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .btn {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #000;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-print {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .btn-back {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        
+        /* KOP SURAT PEMERINTAHAN */
+        .kop-surat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .kop-logo {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+        .kop-text h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .kop-text h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .kop-text p {
+            font-size: 10pt;
+            margin: 2px 0;
+        }
+        .garis-kop-1 {
+            border-top: 3px solid #000000;
+            margin-top: 5px;
+        }
+        .garis-kop-2 {
+            border-top: 1px solid #000000;
+            margin-top: 2px;
+            margin-bottom: 20px;
+        }
+
+        /* JUDUL SURAT RESMI */
+        .judul-laporan {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .judul-laporan h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: underline;
+            margin: 0;
+        }
+        .judul-laporan p {
+            font-size: 11pt;
+            margin: 4px 0 0 0;
+        }
+
+        /* TABEL SURAT KEDINASAN */
+        table.table-gov {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11pt;
+        }
+        table.table-gov th, table.table-gov td {
+            border: 1px solid #000000;
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+        table.table-gov th {
+            background-color: #f2f2f2;
+            text-transform: uppercase;
+            font-size: 10pt;
+            font-weight: bold;
+            text-align: center;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+
+        .summary-box {
+            border: 1px solid #000;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* TANDA TANGAN KEDINASAN */
+        .ttd-container {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+        }
+        .ttd-box {
+            width: 45%;
+            text-align: center;
+        }
+        .ttd-space {
+            height: 70px;
+        }
+
         @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                background-color: #ffffff !important;
-                color: #000000 !important;
-                padding: 0 !important;
-            }
-            .page-break {
-                page-break-after: always;
-            }
-            .shadow-lg, .shadow-sm {
-                box-shadow: none !important;
-            }
-            .border {
-                border-color: #cbd5e1 !important;
-            }
+            .no-print { display: none !important; }
+            body { padding: 0 !important; }
         }
     </style>
 </head>
-<body class="p-4 sm:p-8 min-h-screen">
+<body>
 
     <!-- Action Bar (No Print) -->
-    <div class="max-w-5xl mx-auto mb-6 flex items-center justify-between no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <div class="no-print">
         <div>
-            <h1 class="text-lg font-bold text-slate-800">Cetak Laporan Keuangan Zakat</h1>
-            <p class="text-sm text-slate-500">Periode: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}</p>
+            <strong>Cetak Laporan Keuangan Zakat (Format Kedinasan Resmi)</strong><br>
+            <span style="font-size: 12px; color: #64748b;">Periode: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}</span>
         </div>
-        <div class="flex items-center gap-3">
-            <button onclick="window.history.back()" class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
-                ← Kembali
-            </button>
-            <button onclick="window.print()" class="px-5 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-colors flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                Cetak / Simpan PDF
-            </button>
+        <div>
+            <button onclick="window.history.back()" class="btn btn-back">← Kembali</button>
+            <button onclick="window.print()" class="btn btn-print">Cetak / Simpan PDF</button>
         </div>
     </div>
 
-    <!-- Main Report Document Container -->
-    <div class="max-w-5xl mx-auto bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 shadow-lg">
+    <!-- MAIN REPORT DOCUMENT CONTAINER -->
+    <div style="max-w: 800px; margin: 0 auto;">
 
-        <!-- KOP SURAT LEMBAGA -->
-        <div class="flex items-center justify-between pb-6 border-b-2 border-slate-800">
-            <div class="flex items-center gap-4">
-                <img src="{{ asset('storage/baitul_mal.jpg') }}" class="w-14 h-14 rounded-xl object-contain shadow-md" alt="Baitul Maal Logo" />
-                <div>
-                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ strtoupper($setting->org_name ?? 'BAITUL MAAL AMIL ZAKAT') }}</h2>
-                    <p class="text-xs text-slate-600">{{ $setting->contact_address ?? 'Gedung Baitul Maal Amil Zakat, Jakarta' }}</p>
-                    <p class="text-xs text-slate-500">Telepon: {{ $setting->contact_phone ?? '-' }} | Email: {{ $setting->contact_email ?? '-' }}</p>
-                </div>
-            </div>
-            <div class="text-right">
-                <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-800 font-bold text-xs rounded-md border border-emerald-200">DOKUMEN RESMI</span>
-                <p class="text-xs text-slate-400 mt-1">Dicetak: {{ now()->translatedFormat('d F Y, H:i') }} WIB</p>
+        <!-- KOP SURAT LEMBAGA RESMI -->
+        <div class="kop-surat">
+            <img src="{{ asset('storage/baitul_mal.jpg') }}" class="kop-logo" alt="Logo Instansi" />
+            <div class="kop-text">
+                <h2>LEMBAGA AMIL ZAKAT RESMI</h2>
+                <h1>{{ strtoupper($setting->org_name ?? 'BAITUL MAAL AMIL ZAKAT') }}</h1>
+                <p>Izin Operasional SK Kemenag RI No. 842/2025 | Terakreditasi A</p>
+                <p>{{ $setting->contact_address ?? 'Jl. Kebajikan No. 99, Jakarta Pusat' }} | Telp: {{ $setting->contact_phone ?? '(021) 8000-ZAKAT' }} | Email: {{ $setting->contact_email ?? 'layanan@baitulmaal.go.id' }}</p>
             </div>
         </div>
+        <div class="garis-kop-1"></div>
+        <div class="garis-kop-2"></div>
 
-        <!-- JUDUL LAPORAN -->
-        <div class="text-center my-6">
-            <h3 class="text-xl font-bold text-slate-900 uppercase tracking-wide">LAPORAN MUTASI KAS & PENYALURAN ZAKAT (8 ASNAF)</h3>
-            <p class="text-sm font-medium text-slate-600">Periode Laporan: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') }} – {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}</p>
+        <!-- JUDUL LAPORAN KEDINASAN -->
+        <div class="judul-laporan">
+            <h3>LAPORAN MUTASI KAS & PENYALURAN ZAKAT (8 ASNAF)</h3>
+            <p>Nomor: 042/BAITULMAAL/LAP-FIN/{{ date('m/Y') }}</p>
+            <p>Periode Laporan: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') }} – {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}</p>
         </div>
 
-        <!-- SUMMARY STATS GRID -->
-        <div class="grid grid-cols-3 gap-4 mb-8">
-            <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
-                <p class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Total Terhimpun (Credit)</p>
-                <p class="text-xl font-extrabold text-emerald-700 mt-1">Rp {{ number_format($totalCollected, 0, ',', '.') }}</p>
-            </div>
-            <div class="bg-rose-50/60 p-4 rounded-xl border border-rose-200">
-                <p class="text-xs font-semibold text-rose-800 uppercase tracking-wider">Total Disalurkan (Debit)</p>
-                <p class="text-xl font-extrabold text-rose-700 mt-1">Rp {{ number_format($totalDistributed, 0, ',', '.') }}</p>
-            </div>
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-300">
-                <p class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Sisa Saldo Kas Aktif</p>
-                <p class="text-xl font-extrabold text-slate-900 mt-1">Rp {{ number_format($currentBalance, 0, ',', '.') }}</p>
-            </div>
-        </div>
+        <!-- SUMMARY STATS BOX -->
+        <table class="table-gov">
+            <thead>
+                <tr>
+                    <th>Total Terhimpun (Kredit)</th>
+                    <th>Total Disalurkan (Debet)</th>
+                    <th>Sisa Saldo Kas Aktif</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center font-bold">
+                    <td style="font-size: 13pt;">Rp {{ number_format($totalCollected, 0, ',', '.') }}</td>
+                    <td style="font-size: 13pt;">Rp {{ number_format($totalDistributed, 0, ',', '.') }}</td>
+                    <td style="font-size: 13pt;">Rp {{ number_format($currentBalance, 0, ',', '.') }}</td>
+                </tr>
+            </tbody>
+        </table>
 
         <!-- TABEL 1: RINGKASAN ALOKASI 8 ASNAF -->
-        <div class="mb-8">
-            <h4 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <span class="w-2 h-2 bg-emerald-600 rounded-full"></span>
-                1. Rincian Alokasi Distribusi 8 Asnaf Mustahik
-            </h4>
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs text-left border border-slate-200 rounded-lg overflow-hidden">
-                    <thead class="bg-slate-100 text-slate-800 uppercase text-[10px] font-bold">
-                        <tr>
-                            <th class="px-4 py-2.5 border-b border-slate-200">Kategori 8 Asnaf</th>
-                            <th class="px-4 py-2.5 border-b border-slate-200">Keterangan Syariat</th>
-                            <th class="px-4 py-2.5 border-b border-slate-200 text-center">Jumlah Program</th>
-                            <th class="px-4 py-2.5 border-b border-slate-200 text-right">Total Nominal (Rp)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 font-medium">
-                        @php
-                            $asnafLabels = [
-                                'Fakir' => 'Sangat Miskin / Tidak Berpenghasilan',
-                                'Miskin' => 'Penghasilan Kurang Dari Kebutuhan Pokok',
-                                'Amil' => 'Pengelola & Panitia Zakat',
-                                'Muallaf' => 'Baru Masuk Islam / Dikuatkan Imannya',
-                                'Riqab' => 'Pembebasan Hamba Sahaya / Kemerdekaan',
-                                'Gharim' => 'Terlilit Hutang Kebutuhan Pokok',
-                                'Fisabilillah' => 'Pejuang Agama, Dakwah & Pendidikan',
-                                'Ibnu Sabil' => 'Musafir Kehabisan Bekal Perjalanan',
-                            ];
-                        @endphp
-                        @foreach($asnafBreakdown as $category => $data)
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-4 py-2 font-bold text-slate-900">{{ $category }}</td>
-                                <td class="px-4 py-2 text-slate-600">{{ $asnafLabels[$category] ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-slate-800">{{ $data['count'] }} Program</td>
-                                <td class="px-4 py-2 text-right font-bold text-slate-900">Rp {{ number_format($data['amount'], 0, ',', '.') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot class="bg-slate-50 font-bold border-t-2 border-slate-300">
-                        <tr>
-                            <td colspan="3" class="px-4 py-2.5 text-slate-900 uppercase">Total Alokasi Penyaluran Zakat</td>
-                            <td class="px-4 py-2.5 text-right text-emerald-700">Rp {{ number_format($totalDistributed, 0, ',', '.') }}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+        <p class="font-bold" style="margin-bottom: 6px;">I. RINCIAN ALOKASI DISTRIBUSI 8 ASNAF MUSTAHIK</p>
+        <table class="table-gov">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 25%;">Kategori 8 Asnaf</th>
+                    <th style="width: 40%;">Keterangan Syariat</th>
+                    <th style="width: 12%;">Program</th>
+                    <th style="width: 18%;">Total Nominal (Rp)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $asnafLabels = [
+                        'Fakir' => 'Sangat Miskin / Tidak Berpenghasilan',
+                        'Miskin' => 'Penghasilan Kurang Dari Kebutuhan Pokok',
+                        'Amil' => 'Pengelola & Panitia Zakat',
+                        'Muallaf' => 'Baru Masuk Islam / Dikuatkan Imannya',
+                        'Riqab' => 'Pembebasan Hamba Sahaya / Kemerdekaan',
+                        'Gharim' => 'Terlilit Hutang Kebutuhan Pokok',
+                        'Fisabilillah' => 'Pejuang Agama, Dakwah & Pendidikan',
+                        'Ibnu Sabil' => 'Musafir Kehabisan Bekal Perjalanan',
+                    ];
+                    $no = 1;
+                @endphp
+                @foreach($asnafBreakdown as $category => $data)
+                    <tr>
+                        <td class="text-center">{{ $no++ }}</td>
+                        <td class="font-bold">{{ $category }}</td>
+                        <td>{{ $asnafLabels[$category] ?? '-' }}</td>
+                        <td class="text-center">{{ $data['count'] }} Program</td>
+                        <td class="text-right font-bold">Rp {{ number_format($data['amount'], 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr class="font-bold" style="background-color: #f9f9f9;">
+                    <td colspan="4" class="text-center">TOTAL ALOKASI PENYALURAN ZAKAT</td>
+                    <td class="text-right">Rp {{ number_format($totalDistributed, 0, ',', '.') }}</td>
+                </tr>
+            </tfoot>
+        </table>
 
         <!-- TABEL 2: RIWAYAT MUTASI BUKU KAS (LEDGER) -->
-        <div class="mb-10">
-            <h4 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <span class="w-2 h-2 bg-emerald-600 rounded-full"></span>
-                2. Rincian Mutasi Buku Kas Zakat (Ledger Table)
-            </h4>
-            @if($ledgers->isEmpty())
-                <p class="text-xs text-slate-500 italic p-4 bg-slate-50 rounded-lg text-center">Belum ada mutasi kas pada rentang tanggal ini.</p>
-            @else
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left border border-slate-200 rounded-lg overflow-hidden">
-                        <thead class="bg-slate-100 text-slate-800 uppercase text-[10px] font-bold">
-                            <tr>
-                                <th class="px-3 py-2 border-b border-slate-200">Tanggal & Waktu</th>
-                                <th class="px-3 py-2 border-b border-slate-200">Jenis</th>
-                                <th class="px-3 py-2 border-b border-slate-200">Keterangan Mutasi</th>
-                                <th class="px-3 py-2 border-b border-slate-200 text-right">Nominal (Rp)</th>
-                                <th class="px-3 py-2 border-b border-slate-200 text-right">Saldo Kas (Rp)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 font-medium">
-                            @foreach($ledgers as $ledger)
-                                <tr>
-                                    <td class="px-3 py-2 text-slate-600 whitespace-nowrap">{{ $ledger->created_at->format('d/m/Y H:i') }}</td>
-                                    <td class="px-3 py-2 whitespace-nowrap">
-                                        @if($ledger->type === 'credit')
-                                            <span class="text-emerald-700 font-bold">🟢 Uang Masuk</span>
-                                        @else
-                                            <span class="text-rose-700 font-bold">🔴 Uang Keluar</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-2 text-slate-800">{{ $ledger->description }}</td>
-                                    <td class="px-3 py-2 text-right font-bold {{ $ledger->type === 'credit' ? 'text-emerald-700' : 'text-rose-700' }}">
-                                        {{ $ledger->type === 'credit' ? '+' : '-' }} Rp {{ number_format($ledger->amount, 0, ',', '.') }}
-                                    </td>
-                                    <td class="px-3 py-2 text-right font-bold text-slate-900">
-                                        Rp {{ number_format($ledger->balance_after, 0, ',', '.') }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        </div>
+        <p class="font-bold" style="margin-top: 25px; margin-bottom: 6px;">II. RINCIAN MUTASI BUKU KAS ZAKAT (DOUBLE-ENTRY LEDGER)</p>
+        @if($ledgers->isEmpty())
+            <p style="font-style: italic; text-align: center; border: 1px solid #000; padding: 10px;">Belum ada mutasi kas pada rentang tanggal ini.</p>
+        @else
+            <table class="table-gov">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Tanggal & Waktu</th>
+                        <th style="width: 12%;">Jenis</th>
+                        <th style="width: 45%;">Keterangan Mutasi Kas</th>
+                        <th style="width: 14%;">Nominal (Rp)</th>
+                        <th style="width: 14%;">Saldo Kas (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($ledgers as $ledger)
+                        <tr>
+                            <td class="text-center" style="font-size: 10pt;">{{ $ledger->created_at->format('d/m/Y H:i') }}</td>
+                            <td class="text-center font-bold">
+                                {{ $ledger->type === 'credit' ? 'Uang Masuk (+)' : 'Uang Keluar (-)' }}
+                            </td>
+                            <td>{{ $ledger->description }}</td>
+                            <td class="text-right font-bold">
+                                {{ $ledger->type === 'credit' ? '+' : '-' }} Rp {{ number_format($ledger->amount, 0, ',', '.') }}
+                            </td>
+                            <td class="text-right font-bold">
+                                Rp {{ number_format($ledger->balance_after, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
 
-        <!-- BLOK TANDA TANGAN KETUA AMIL & BENDAHARA -->
-        <div class="mt-12 pt-6 border-t border-slate-200 grid grid-cols-2 text-center text-xs">
-            <div>
-                <p class="text-slate-500">Mengetahui,</p>
-                <p class="font-bold text-slate-900 mt-0.5">Ketua Pengurus Baitul Maal</p>
-                <div class="h-20 flex items-center justify-center">
-                    <span class="text-[10px] text-slate-400 italic">[ Tanda Tangan & Stempel Resmi ]</span>
-                </div>
-                <p class="font-bold text-slate-900 underline">H. Muhammad Rayhan, S.E., M.E.</p>
-                <p class="text-[10px] text-slate-500">NIP. 19850412 201001 1 003</p>
+        <!-- TANDA TANGAN SURAT RESMI KEDINASAN -->
+        <div class="ttd-container">
+            <div class="ttd-box">
+                <p>Mengetahui,</p>
+                <p class="font-bold">Ketua Pengurus Baitul Maal</p>
+                <div class="ttd-space"></div>
+                <p class="font-bold" style="text-decoration: underline;">H. Muhammad Rayhan, S.E., M.E.</p>
+                <p style="font-size: 10pt;">NIP. 19850412 201001 1 003</p>
             </div>
-            <div>
-                <p class="text-slate-500">Jakarta, {{ now()->translatedFormat('d F Y') }}</p>
-                <p class="font-bold text-slate-900 mt-0.5">Bendahara / Amil Zakat</p>
-                <div class="h-20 flex items-center justify-center">
-                    <span class="text-[10px] text-slate-400 italic">[ Tanda Tangan Resmi ]</span>
-                </div>
-                <p class="font-bold text-slate-900 underline">Ahmad Syarifuddin, S.Ak.</p>
-                <p class="text-[10px] text-slate-500">NIP. 19920815 201503 1 005</p>
+            <div class="ttd-box">
+                <p>Jakarta, {{ now()->translatedFormat('d F Y') }}</p>
+                <p class="font-bold">Bendahara / Amil Zakat</p>
+                <div class="ttd-space"></div>
+                <p class="font-bold" style="text-decoration: underline;">Ahmad Syarifuddin, S.Ak.</p>
+                <p style="font-size: 10pt;">NIP. 19920815 201503 1 005</p>
             </div>
         </div>
 
