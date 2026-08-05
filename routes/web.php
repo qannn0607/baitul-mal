@@ -9,7 +9,15 @@ Route::get('/', function () {
     if (Auth::check()) {
         return redirect()->route('dashboard');
     }
-    return view('welcome');
+
+    $totalCollected = \App\Models\Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])->sum('amount');
+    $totalDistributed = \App\Models\Distribution::sum('amount');
+    $currentBalance = \App\Services\ZakatFundService::getCurrentBalance();
+    $mustahikCount = \App\Models\Distribution::distinct('recipient_name')->count('recipient_name');
+    $recentDistributions = \App\Models\Distribution::latest()->take(3)->get();
+    $setting = \App\Models\Setting::first();
+
+    return view('welcome', compact('totalCollected', 'totalDistributed', 'currentBalance', 'mustahikCount', 'recentDistributions', 'setting'));
 });
 
 Route::middleware('auth')->group(function () {
