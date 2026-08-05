@@ -70,4 +70,21 @@ class MidtransPaymentTest extends TestCase
             'status' => 'Transaksi Sukses',
         ]);
     }
+
+    public function test_user_can_manually_trigger_payment_status_check(): void
+    {
+        $user = User::factory()->create();
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'sender_name' => 'Budi Santoso',
+            'title' => 'Zakat Fitrah',
+            'amount' => 45000,
+            'midtrans_order_id' => 'TRX-TEST-123',
+            'status' => 'Menunggu Verifikasi',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('zakat.check', $payment));
+
+        $response->assertRedirect(route('zakat.history'));
+    }
 }

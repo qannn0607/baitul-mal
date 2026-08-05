@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
     // Riwayat Pembayaran & Struk
     Route::get('/riwayat-pembayaran', [ZakatController::class, 'history'])->name('zakat.history');
+    Route::get('/riwayat-pembayaran/check/{payment}', [ZakatController::class, 'checkStatus'])->name('zakat.check');
     Route::get('/struk/{payment}', [ZakatController::class, 'receipt'])->name('zakat.receipt');
 
     // Profile Management

@@ -169,9 +169,14 @@
                                                 Cetak PDF
                                             </a>
                                         @elseif($pay->status === 'Menunggu Verifikasi' && !empty($pay->snap_token))
-                                            <button @click="paySnap('{{ $pay->snap_token }}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-xs transition-colors">
-                                                Bayar Sekarang
-                                            </button>
+                                            <div class="inline-flex items-center gap-1.5 justify-end">
+                                                <a href="{{ route('zakat.check', $pay->id) }}" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 dark:bg-sky-950 dark:hover:bg-sky-900 text-sky-800 dark:text-sky-300 text-[11px] font-bold rounded transition-colors" title="Sinkronkan status dari Midtrans Gateway">
+                                                    Cek Status
+                                                </a>
+                                                <button @click="paySnap('{{ $pay->snap_token }}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-xs transition-colors">
+                                                    Bayar Sekarang
+                                                </button>
+                                            </div>
                                         @else
                                             <span class="text-[11px] text-slate-400 italic">Menunggu Verifikasi</span>
                                         @endif

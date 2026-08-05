@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Payment;
+use App\Services\AuditService;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -62,5 +63,59 @@ class MidtransService
 
             return null;
         }
+    }
+
+    public static function syncPaymentStatus(Payment $payment): bool
+    {
+        self::initConfig();
+
+        if (empty(Config::$serverKey) || empty($payment->midtrans_order_id)) {
+            return false;
+        }
+
+        try {
+            $midtransStatus = \Midtrans\Transaction::status($payment->midtrans_order_id);
+            $trxStatus = is_object($midtransStatus) 
+                ? ($midtransStatus->transaction_status ?? null) 
+                : ($midtransStatus['transaction_status'] ?? null);
+
+            if (in_array($trxStatus, ['capture', 'settlement'])) {
+                $oldValues = $payment->toArray();
+                $payment->update([
+                    'status' => 'Transaksi Sukses',
+                    'verified_at' => now(),
+                ]);
+
+                AuditService::log(
+                    'Verifikasi Pembayaran Otomatis (Midtrans Sync)',
+                    'Pembayaran #' . $payment->id . ' sebesar Rp ' . number_format($payment->amount, 0, ',', '.') . ' berhasil disinkronisasi dari Midtrans Gateway.',
+                    $payment,
+                    $oldValues,
+                    $payment->toArray()
+                );
+
+                return true;
+            } elseif (in_array($trxStatus, ['cancel', 'deny', 'expire'])) {
+                $oldValues = $payment->toArray();
+                $payment->update([
+                    'status' => 'Ditolak',
+                    'rejection_reason' => 'Transaksi Midtrans ' . $trxStatus . ' (Gagal / Kadaluarsa).',
+                ]);
+
+                AuditService::log(
+                    'Penolakan Pembayaran Otomatis (Midtrans Sync)',
+                    'Transaksi Midtrans #' . $payment->id . ' mengalami status ' . $trxStatus . '.',
+                    $payment,
+                    $oldValues,
+                    $payment->toArray()
+                );
+
+                return true;
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        return false;
     }
 }

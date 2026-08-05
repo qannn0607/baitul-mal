@@ -148,6 +148,16 @@ class ZakatController extends Controller
         $activeSnapToken = $request->query('snap_token');
         $activePaymentId = $request->query('payment_id');
 
+        // Auto-sync any pending Midtrans payments for this user
+        $pendingPayments = Payment::where('user_id', $user->id)
+            ->where('status', 'Menunggu Verifikasi')
+            ->whereNotNull('midtrans_order_id')
+            ->get();
+
+        foreach ($pendingPayments as $p) {
+            MidtransService::syncPaymentStatus($p);
+        }
+
         $query = Payment::where('user_id', $user->id);
 
         if ($statusFilter && in_array($statusFilter, ['Menunggu Verifikasi', 'Transaksi Sukses', 'Sudah Disalurkan', 'Ditolak'])) {
@@ -159,6 +169,24 @@ class ZakatController extends Controller
         $isProduction = config('services.midtrans.is_production');
 
         return view('zakat.history', compact('payments', 'statusFilter', 'activeSnapToken', 'activePaymentId', 'clientKey', 'isProduction'));
+    }
+
+    /**
+     * Check status with Midtrans API directly
+     */
+    public function checkStatus(Payment $payment)
+    {
+        if ($payment->user_id !== Auth::id() && ! Auth::user()->isAdmin()) {
+            abort(403, 'Akses tidak diizinkan');
+        }
+
+        $synced = MidtransService::syncPaymentStatus($payment);
+
+        if ($synced && $payment->fresh()->status === 'Transaksi Sukses') {
+            return redirect()->route('zakat.history')->with('success', 'Status pembayaran berhasil diverifikasi: Transaksi Sukses!');
+        }
+
+        return redirect()->route('zakat.history')->with('info', 'Status pembayaran saat ini: ' . $payment->fresh()->status);
     }
 
     /**
