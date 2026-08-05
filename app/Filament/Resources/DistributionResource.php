@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DistributionResource\Pages;
 use App\Models\Distribution;
+use App\Models\Payment;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -26,6 +27,22 @@ class DistributionResource extends Resource
     protected static ?string $pluralModelLabel = 'Penyaluran Zakat';
 
     protected static ?int $navigationSort = 2;
+
+    /**
+     * Hitung total saldo zakat terhimpun (Transaksi Sukses / Disalurkan) yang tersedia untuk disalurkan
+     */
+    public static function getAvailableBalance(?int $currentDistributionId = null): float
+    {
+        $totalCollected = Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])->sum('amount');
+
+        $query = Distribution::query();
+        if ($currentDistributionId) {
+            $query->where('id', '!=', $currentDistributionId);
+        }
+        $totalDistributed = $query->sum('amount');
+
+        return max(0, $totalCollected - $totalDistributed);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -62,6 +79,16 @@ class DistributionResource extends Resource
                     ->numeric()
                     ->prefix('Rp')
                     ->minValue(1000)
+                    ->maxValue(function ($record) {
+                        return static::getAvailableBalance($record?->id);
+                    })
+                    ->validationMessages([
+                        'max' => 'Nominal penyaluran melebihi saldo terhimpun yang tersedia. Saldo zakat tidak mencukupi.',
+                    ])
+                    ->helperText(function ($record) {
+                        $balance = static::getAvailableBalance($record?->id);
+                        return 'Saldo terhimpun (transaksi sukses) yang tersedia disalurkan saat ini: Rp ' . number_format($balance, 0, ',', '.');
+                    })
                     ->placeholder('Contoh: 1500000')
                     ->label('Nominal Penyaluran (Rp)'),
 
