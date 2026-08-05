@@ -15,6 +15,8 @@ class Payment extends Model
         'title',
         'amount',
         'proof_image',
+        'snap_token',
+        'midtrans_order_id',
         'status',
         'rejection_reason',
         'verified_by',

@@ -1,8 +1,14 @@
 <?php
-    $payments = Auth::user()->payments()->latest()->get();
+    $midtransJsUrl = ($isProduction ?? false) 
+        ? 'https://app.midtrans.com/snap/snap.js' 
+        : 'https://app.sandbox.midtrans.com/snap/snap.js';
 ?>
 
 <x-app-layout>
+    @if(!empty($clientKey))
+        <script src="{{ $midtransJsUrl }}" data-client-key="{{ $clientKey }}"></script>
+    @endif
+
     <div class="space-y-6" 
          x-data="{
              searchQuery: '',
@@ -15,6 +21,28 @@
                  this.previewImageUrl = url;
                  this.previewTitle = title;
                  this.previewModalOpen = true;
+             },
+
+             paySnap(token) {
+                 if (window.snap && token) {
+                     window.snap.pay(token, {
+                         onSuccess: function(result) {
+                             window.location.href = '{{ route('zakat.history') }}';
+                         },
+                         onPending: function(result) {
+                             window.location.href = '{{ route('zakat.history') }}';
+                         },
+                         onError: function(result) {
+                             window.location.href = '{{ route('zakat.history') }}';
+                         }
+                     });
+                 }
+             },
+
+             init() {
+                 @if(!empty($activeSnapToken))
+                     this.paySnap('{{ $activeSnapToken }}');
+                 @endif
              }
          }">
 
@@ -65,7 +93,7 @@
                                 <th class="pb-2.5">Tanggal & ID</th>
                                 <th class="pb-2.5">Peruntukan Zakat</th>
                                 <th class="pb-2.5">Nominal</th>
-                                <th class="pb-2.5">Bukti Resi</th>
+                                <th class="pb-2.5">Bukti Resi / Gateway</th>
                                 <th class="pb-2.5">Status</th>
                                 <th class="pb-2.5 text-right">Aksi</th>
                             </tr>
@@ -90,9 +118,13 @@
                                     </td>
 
                                     <td class="py-3">
-                                        <button @click="openPreview('{{ Storage::url($pay->proof_image) }}', '{{ $pay->title }}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[11px] font-bold rounded text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-                                            Lihat Resi
-                                        </button>
+                                        @if(!empty($pay->proof_image))
+                                            <button @click="openPreview('{{ Storage::url($pay->proof_image) }}', '{{ $pay->title }}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[11px] font-bold rounded text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                                                Lihat Resi
+                                            </button>
+                                        @else
+                                            <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">Midtrans Online</span>
+                                        @endif
                                     </td>
 
                                     <td class="py-3">
@@ -116,6 +148,10 @@
                                             <a href="{{ route('zakat.receipt', $pay->id) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-xs inline-flex items-center gap-1 transition-colors">
                                                 Cetak PDF
                                             </a>
+                                        @elseif($pay->status === 'Menunggu Verifikasi' && !empty($pay->snap_token))
+                                            <button @click="paySnap('{{ $pay->snap_token }}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-xs transition-colors">
+                                                Bayar Sekarang
+                                            </button>
                                         @else
                                             <span class="text-[11px] text-slate-400 italic">Menunggu Verifikasi</span>
                                         @endif

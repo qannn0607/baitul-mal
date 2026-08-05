@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('sender_name');
             $table->string('title'); // e.g. Zakat Maal, Zakat Fitrah, Zakat Penghasilan, Donasi / Infaq
             $table->unsignedBigInteger('amount');
-            $table->string('proof_image');
+            $table->string('proof_image')->nullable();
+            $table->string('snap_token')->nullable();
+            $table->string('midtrans_order_id')->nullable();
             $table->enum('status', ['Menunggu Verifikasi', 'Diverifikasi', 'Sudah Disalurkan', 'Ditolak'])->default('Menunggu Verifikasi');
             $table->text('rejection_reason')->nullable();
             $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();

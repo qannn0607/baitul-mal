@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Setting;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class ZakatController extends Controller
 {
@@ -16,7 +16,7 @@ class ZakatController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        
+
         $totalPaid = Payment::where('user_id', $user->id)
             ->whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])
             ->sum('amount');
@@ -55,7 +55,7 @@ class ZakatController extends Controller
     {
         $setting = Setting::first();
         $nisabGoldPrice = $setting ? $setting->nisab_gold_price : 1400000;
-        
+
         // Nisab Maal = 85 gram gold
         $nisabMaalYearly = 85 * $nisabGoldPrice;
         // Nisab Penghasilan Monthly = 85 gram / 12 * gold price
@@ -77,12 +77,14 @@ class ZakatController extends Controller
         $qrisUrl = Setting::getQrisUrl();
         $prefilledAmount = $request->query('amount', '');
         $prefilledTitle = $request->query('title', 'Zakat Maal');
+        $clientKey = config('services.midtrans.client_key');
+        $isProduction = config('services.midtrans.is_production');
 
-        return view('zakat.pay', compact('user', 'qrisUrl', 'prefilledAmount', 'prefilledTitle'));
+        return view('zakat.pay', compact('user', 'qrisUrl', 'prefilledAmount', 'prefilledTitle', 'clientKey', 'isProduction'));
     }
 
     /**
-     * Store Payment Upload
+     * Store Payment (Manual Upload or Midtrans Online)
      */
     public function storePay(Request $request)
     {
@@ -90,27 +92,48 @@ class ZakatController extends Controller
             'sender_name' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'min:1000'],
-            'proof_image' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:5120'], // max 5MB
+            'proof_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // max 5MB
+            'payment_method' => ['nullable', 'string'],
         ], [
             'sender_name.required' => 'Nama pengirim wajib diisi.',
             'title.required' => 'Judul / Peruntukan zakat wajib dipilih.',
             'amount.required' => 'Nominal zakat wajib diisi.',
             'amount.min' => 'Nominal zakat minimal Rp 1.000.',
-            'proof_image.required' => 'Bukti pembayaran wajib diunggah.',
             'proof_image.image' => 'File bukti pembayaran harus berupa gambar (JPG, PNG).',
             'proof_image.max' => 'Ukuran gambar maksimal adalah 5 MB.',
         ]);
 
-        $path = $request->file('proof_image')->store('payment_proofs', 'public');
+        $path = null;
+        if ($request->hasFile('proof_image')) {
+            $path = $request->file('proof_image')->store('payment_proofs', 'public');
+        }
 
-        Payment::create([
+        $payment = Payment::create([
             'user_id' => Auth::id(),
             'sender_name' => $request->sender_name,
             'title' => $request->title,
             'amount' => $request->amount,
             'proof_image' => $path,
+            'notes' => $request->notes,
             'status' => 'Menunggu Verifikasi',
         ]);
+
+        // If Midtrans payment or no manual proof uploaded, generate Snap Token
+        $snapToken = MidtransService::createSnapToken($payment);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'payment_id' => $payment->id,
+                'snap_token' => $snapToken,
+                'redirect_url' => route('zakat.history'),
+            ]);
+        }
+
+        if ($snapToken && ! $path) {
+            return redirect()->route('zakat.history', ['snap_token' => $snapToken, 'payment_id' => $payment->id])
+                ->with('success', 'Transaksi zakat berhasil dibuat! Silakan selesaikan pembayaran via Midtrans.');
+        }
 
         return redirect()->route('zakat.history')->with('success', 'Bukti pembayaran berhasil dikirim! Status Anda saat ini Menunggu Verifikasi.');
     }
@@ -122,6 +145,8 @@ class ZakatController extends Controller
     {
         $user = Auth::user();
         $statusFilter = $request->query('status');
+        $activeSnapToken = $request->query('snap_token');
+        $activePaymentId = $request->query('payment_id');
 
         $query = Payment::where('user_id', $user->id);
 
@@ -130,8 +155,10 @@ class ZakatController extends Controller
         }
 
         $payments = $query->latest()->paginate(10)->withQueryString();
+        $clientKey = config('services.midtrans.client_key');
+        $isProduction = config('services.midtrans.is_production');
 
-        return view('zakat.history', compact('payments', 'statusFilter'));
+        return view('zakat.history', compact('payments', 'statusFilter', 'activeSnapToken', 'activePaymentId', 'clientKey', 'isProduction'));
     }
 
     /**
@@ -139,7 +166,7 @@ class ZakatController extends Controller
      */
     public function receipt(Payment $payment)
     {
-        if ($payment->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        if ($payment->user_id !== Auth::id() && ! Auth::user()->isAdmin()) {
             abort(403, 'Akses tidak diizinkan');
         }
 

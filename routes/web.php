@@ -33,4 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Callback Notification Midtrans (bebas CSRF)
+Route::post('/api/midtrans/notification', [\App\Http\Controllers\Api\PaymentCallbackController::class, 'handleNotification'])->name('midtrans.callback');
+
 require __DIR__.'/auth.php';
