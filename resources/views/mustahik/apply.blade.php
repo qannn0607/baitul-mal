@@ -11,9 +11,7 @@
                 
                 <div class="mb-8 pb-6 border-b border-slate-200">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-bold text-xl">
-                            🤲
-                        </div>
+                        <img src="{{ asset('storage/baitul_mal.jpg') }}" class="w-10 h-10 rounded-xl object-contain shadow-sm" alt="Baitul Maal Logo" />
                         <div>
                             <h3 class="text-xl font-extrabold text-slate-900">Permohonan Bantuan Zakat (Mustahik)</h3>
                             <p class="text-sm text-slate-500">Layanan penerimaan permohonan bantuan zakat transparan dan akuntabel bagi 8 Asnaf yang berhak.</p>

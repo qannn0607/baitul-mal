@@ -36,14 +36,8 @@
     <!-- NAVIGATION HEADER -->
     <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-extrabold text-xs tracking-wider shadow-xs">
-                    BM
-                </div>
-                <div>
-                    <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white block leading-none">BAITUL MAAL</span>
-                    <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Portal Zakat Syariah</span>
-                </div>
+            <a href="/" class="flex items-center">
+                <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-10 w-auto rounded-xl object-contain shadow-sm" alt="Baitul Maal Logo" />
             </a>
 
             <!-- Desktop Nav Links -->
@@ -285,11 +279,8 @@
     <footer class="bg-slate-900 text-slate-100 border-t border-slate-800 py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-extrabold text-xs">
-                        BM
-                    </div>
-                    <span class="font-extrabold text-sm text-white tracking-tight">BAITUL MAAL</span>
+                <div class="flex items-center">
+                    <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-10 w-auto rounded-xl object-contain shadow-sm" alt="Baitul Maal Logo" />
                 </div>
                 <p class="text-xs text-slate-400">
                     Sistem Informasi Pengelolaan & Transparansi Penyaluran Zakat

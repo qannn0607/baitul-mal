@@ -58,9 +58,7 @@
         <!-- KOP SURAT LEMBAGA -->
         <div class="flex items-center justify-between pb-6 border-b-2 border-slate-800">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
-                    BM
-                </div>
+                <img src="{{ asset('storage/baitul_mal.jpg') }}" class="w-14 h-14 rounded-xl object-contain shadow-md" alt="Baitul Maal Logo" />
                 <div>
                     <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ strtoupper($setting->org_name ?? 'BAITUL MAAL AMIL ZAKAT') }}</h2>
                     <p class="text-xs text-slate-600">{{ $setting->contact_address ?? 'Gedung Baitul Maal Amil Zakat, Jakarta' }}</p>

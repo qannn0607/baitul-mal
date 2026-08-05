@@ -29,8 +29,8 @@
 
                 @if($applications->isEmpty())
                     <div class="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
-                        <div class="w-12 h-12 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
-                            🤲
+                        <div class="w-12 h-12 rounded-xl overflow-hidden border border-slate-300 mx-auto mb-3 flex items-center justify-center">
+                            <img src="{{ asset('storage/baitul_mal.jpg') }}" class="w-full h-full object-cover" alt="Baitul Maal Logo" />
                         </div>
                         <h4 class="text-base font-bold text-slate-800">Belum Ada Pengajuan Bantuan</h4>
                         <p class="text-xs text-slate-500 mt-1 mb-4">Anda belum pernah mengajukan permohonan bantuan zakat.</p>

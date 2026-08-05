@@ -37,14 +37,8 @@
         
         <!-- Header area with logo & theme toggle -->
         <div class="sm:mx-auto sm:w-full sm:max-w-md flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
-                    BM
-                </div>
-                <div>
-                    <span class="font-extrabold text-base tracking-wide text-slate-900 dark:text-white block leading-none">BAITUL MAAL</span>
-                    <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sistem Zakat Digital</span>
-                </div>
+            <a href="/" class="flex items-center">
+                <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-10 w-auto rounded-xl object-contain shadow-sm" alt="Baitul Maal Logo" />
             </a>
 
             <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="p-2 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">

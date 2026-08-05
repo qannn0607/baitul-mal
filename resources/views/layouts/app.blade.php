@@ -98,14 +98,8 @@
         <aside class="hidden lg:flex flex-col w-60 bg-slate-900 text-slate-100 border-r border-slate-800 flex-shrink-0 z-20">
             <!-- Sidebar Header -->
             <div class="p-4 flex items-center justify-between border-b border-slate-800">
-                <a href="/" class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-xs">
-                        BM
-                    </div>
-                    <div>
-                        <h2 class="font-extrabold text-sm leading-tight tracking-wide text-white">BAITUL MAAL</h2>
-                        <p class="text-[11px] text-emerald-400 font-medium">Portal Zakat</p>
-                    </div>
+                <a href="/" class="flex items-center">
+                    <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-10 w-auto rounded-xl object-contain shadow-md" alt="Baitul Maal Logo" />
                 </a>
 
                 <!-- Dark Mode Toggle Button -->
@@ -199,11 +193,8 @@
                  class="relative ml-auto w-72 max-w-full bg-slate-900 text-slate-100 flex flex-col h-full z-10 border-l border-slate-800">
 
                 <div class="p-4 flex items-center justify-between border-b border-slate-800">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
-                            BM
-                        </div>
-                        <span class="font-extrabold text-sm text-white">BAITUL MAAL</span>
+                    <div class="flex items-center">
+                        <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-8 w-auto rounded-lg object-contain" alt="Baitul Maal Logo" />
                     </div>
                     <div class="flex items-center gap-1">
                         <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="p-1.5 text-slate-400 hover:text-white">
@@ -264,11 +255,8 @@
 
             <!-- MOBILE TOP HEADER -->
             <header class="lg:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between shadow-sm z-10 border-b border-slate-800">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-xs">
-                        BM
-                    </div>
-                    <span class="font-extrabold text-sm text-white">BAITUL MAAL</span>
+                <div class="flex items-center">
+                    <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-8 w-auto rounded-lg object-contain" alt="Baitul Maal Logo" />
                 </div>
 
                 <div class="flex items-center gap-2">

@@ -34,14 +34,8 @@
 
         <!-- HEADER STRUK -->
         <div class="flex items-center justify-between border-b-2 border-emerald-600 pb-6">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-md">
-                    BM
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-900 tracking-wider">BAITUL MAAL</h2>
-                    <p class="text-xs text-emerald-600 font-bold">Lembaga Amil Zakat Resmi</p>
-                </div>
+            <div class="flex items-center">
+                <img src="{{ asset('storage/baitul_mal.jpg') }}" class="h-12 w-auto rounded-xl object-contain shadow-md" alt="Baitul Maal Logo" />
             </div>
             <div class="text-right">
                 <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-black uppercase rounded-full tracking-wider">BUKTI SAH PENERIMAAN</span>
