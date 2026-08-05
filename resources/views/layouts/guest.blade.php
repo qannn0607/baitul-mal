@@ -10,10 +10,10 @@
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#059669">
 
-        <!-- Google Fonts: Inter -->
+        <!-- Google Fonts: Plus Jakarta Sans & Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -21,7 +21,7 @@
                 darkMode: 'class',
                 theme: {
                     extend: {
-                        fontFamily: { sans: ['Inter', 'sans-serif'] },
+                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
                     }
                 }
             }
@@ -29,7 +29,7 @@
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
         <style>
-            body { font-family: 'Inter', sans-serif; }
+            body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; letter-spacing: -0.01em; }
             [x-cloak] { display: none !important; }
         </style>
     </head>
