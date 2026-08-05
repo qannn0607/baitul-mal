@@ -11,17 +11,26 @@
          x-data="{
              type: 'penghasilan',
              
-             // Inputs Penghasilan
+             // Raw Inputs (Simpan sebagai Angka Murni)
              monthlyIncome: 10000000,
              monthlyBonus: 0,
              monthlyNeeds: 2000000,
-
-             // Inputs Maal
              savings: 120000000,
              goldGrams: 0,
-
-             // Inputs Fitrah
              fitrahCount: 1,
+
+             // Formatted Display Values
+             monthlyIncomeDisplay: '10.000.000',
+             monthlyBonusDisplay: '0',
+             monthlyNeedsDisplay: '2.000.000',
+             savingsDisplay: '120.000.000',
+
+             // Helper Format Rupiah (Realtime Typing)
+             formatInput(field, rawField, value) {
+                 let number = value.replace(/[^0-9]/g, '');
+                 this[rawField] = number ? parseInt(number) : 0;
+                 this[field] = number ? parseInt(number).toLocaleString('id-ID') : '';
+             },
 
              // Constants
              nisabGoldPrice: {{ $nisabGoldPrice }},
@@ -114,7 +123,10 @@
                         <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">Penghasilan Utama Per Bulan (Gaji / Honor)</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-xs font-bold text-slate-400">Rp</span>
-                            <input type="number" x-model="monthlyIncome" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
+                            <input type="text" 
+                                   :value="monthlyIncomeDisplay" 
+                                   @input="formatInput('monthlyIncomeDisplay', 'monthlyIncome', $event.target.value)" 
+                                   class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
                         </div>
                     </div>
 
@@ -122,7 +134,10 @@
                         <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">Pendapatan Tambahan / Bonus (Opsional)</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-xs font-bold text-slate-400">Rp</span>
-                            <input type="number" x-model="monthlyBonus" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
+                            <input type="text" 
+                                   :value="monthlyBonusDisplay" 
+                                   @input="formatInput('monthlyBonusDisplay', 'monthlyBonus', $event.target.value)" 
+                                   class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
                         </div>
                     </div>
 
@@ -130,7 +145,10 @@
                         <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">Pengeluaran Kebutuhan Pokok Bulan Ini</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-xs font-bold text-slate-400">Rp</span>
-                            <input type="number" x-model="monthlyNeeds" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
+                            <input type="text" 
+                                   :value="monthlyNeedsDisplay" 
+                                   @input="formatInput('monthlyNeedsDisplay', 'monthlyNeeds', $event.target.value)" 
+                                   class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
                         </div>
                     </div>
                 </div>
@@ -146,7 +164,10 @@
                         <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">Total Tabungan / Deposito / Giro (Telah Mengendap 1 Tahun)</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-xs font-bold text-slate-400">Rp</span>
-                            <input type="number" x-model="savings" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
+                            <input type="text" 
+                                   :value="savingsDisplay" 
+                                   @input="formatInput('savingsDisplay', 'savings', $event.target.value)" 
+                                   class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
                         </div>
                     </div>
 
@@ -218,7 +239,7 @@
                 <div class="pt-2">
                     <a :href="'/zakat/pay?title=' + encodeURIComponent(finalZakatTitle) + '&amount=' + finalZakatAmount" 
                        class="w-full inline-flex items-center justify-center px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-xs transition-colors text-center">
-                        Bayar {{ $finalZakatTitle ?? 'Zakat' }} Sekarang
+                        Bayar Zakat Sekarang
                     </a>
                 </div>
 
