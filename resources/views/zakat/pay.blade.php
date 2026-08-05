@@ -94,10 +94,10 @@
                     <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs text-center space-y-3">
                         <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 block uppercase tracking-wider">QRIS Resmi Semua Bank / E-Wallet</span>
 
-                        <div class="p-2 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 inline-block">
+                        <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 inline-block shadow-xs">
                             <img src="{{ !empty($setting->qris_image) ? Storage::url($setting->qris_image) : asset('qris_sample.png') }}" 
                                  alt="QRIS Baitul Maal" 
-                                 class="w-48 h-48 object-contain mx-auto rounded">
+                                 class="w-64 h-64 sm:w-72 sm:h-72 object-contain mx-auto rounded-lg">
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400">Scan QRIS menggunakan GoPay, OVO, Dana, LinkAja, BCA, BSI, dll.</p>
                     </div>
