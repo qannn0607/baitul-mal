@@ -64,14 +64,13 @@ class ZakatFundService
                 return;
             }
 
-            $currentBalance = static::getCurrentBalance();
-            $newBalance = $currentBalance + $payment->amount;
+            $balanceAfter = static::getCurrentBalance();
 
             ZakatLedger::create([
                 'payment_id' => $payment->id,
                 'type' => 'credit',
                 'amount' => $payment->amount,
-                'balance_after' => $newBalance,
+                'balance_after' => $balanceAfter,
                 'description' => "Penerimaan Zakat ({$payment->title}) - #TRX-" . str_pad($payment->id, 5, '0', STR_PAD_LEFT) . " dari {$payment->sender_name}",
             ]);
 
@@ -105,13 +104,13 @@ class ZakatFundService
             // Hapus ledger lama jika edit
             ZakatLedger::where('distribution_id', $distribution->id)->delete();
 
-            $newBalance = max(0, $available - $distribution->amount);
+            $balanceAfter = static::getCurrentBalance();
 
             ZakatLedger::create([
                 'distribution_id' => $distribution->id,
                 'type' => 'debit',
                 'amount' => $distribution->amount,
-                'balance_after' => $newBalance,
+                'balance_after' => $balanceAfter,
                 'description' => "Penyaluran Zakat [{$distribution->asnaf}] - {$distribution->program_name} kepada {$distribution->recipient_name}",
             ]);
 
