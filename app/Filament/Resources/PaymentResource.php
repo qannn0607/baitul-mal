@@ -115,6 +115,8 @@ class PaymentResource extends Resource
 
                 Tables\Columns\ImageColumn::make('proof_image')
                     ->disk('public')
+                    ->url(fn ($record) => $record->proof_image ? asset('storage/' . $record->proof_image) : null)
+                    ->openUrlInNewTab()
                     ->label('Bukti Transfer'),
 
                 Tables\Columns\TextColumn::make('status')
