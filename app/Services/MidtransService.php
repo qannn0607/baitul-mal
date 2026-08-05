@@ -44,6 +44,9 @@ class MidtransService
                     'name' => $payment->title,
                 ],
             ],
+            'callbacks' => [
+                'finish' => route('zakat.history'),
+            ],
         ];
 
         try {

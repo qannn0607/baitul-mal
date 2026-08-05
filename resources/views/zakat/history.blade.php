@@ -48,6 +48,9 @@
                          },
                          onError: function(result) {
                              window.location.href = '{{ route('zakat.history') }}';
+                         },
+                         onClose: function() {
+                             window.location.href = '{{ route('zakat.history') }}';
                          }
                      });
                  }
@@ -55,6 +58,9 @@
 
              init() {
                  @if(!empty($activeSnapToken))
+                     if (window.history && window.history.replaceState) {
+                         window.history.replaceState({}, document.title, window.location.pathname);
+                     }
                      this.paySnap('{{ $activeSnapToken }}');
                  @endif
              }
