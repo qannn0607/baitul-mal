@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('proof_image')->nullable();
             $table->string('snap_token')->nullable();
             $table->string('midtrans_order_id')->nullable();
-            $table->enum('status', ['Menunggu Verifikasi', 'Diverifikasi', 'Sudah Disalurkan', 'Ditolak'])->default('Menunggu Verifikasi');
+            $table->enum('status', ['Menunggu Verifikasi', 'Transaksi Sukses', 'Sudah Disalurkan', 'Ditolak'])->default('Menunggu Verifikasi');
             $table->text('rejection_reason')->nullable();
             $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('verified_at')->nullable();

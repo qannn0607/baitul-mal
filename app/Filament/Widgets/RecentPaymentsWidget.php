@@ -46,7 +46,7 @@ class RecentPaymentsWidget extends BaseWidget
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Menunggu Verifikasi' => 'warning',
-                        'Diverifikasi' => 'success',
+                        'Transaksi Sukses' => 'success',
                         'Sudah Disalurkan' => 'info',
                         'Ditolak' => 'danger',
                         default => 'gray',
@@ -62,7 +62,7 @@ class RecentPaymentsWidget extends BaseWidget
                     ->action(function (Payment $record) {
                         $oldValues = $record->toArray();
                         $record->update([
-                            'status' => 'Diverifikasi',
+                            'status' => 'Transaksi Sukses',
                             'verified_by' => Auth::id(),
                             'verified_at' => now(),
                         ]);
@@ -80,7 +80,7 @@ class RecentPaymentsWidget extends BaseWidget
                     ->label('Disalurkan')
                     ->icon('heroicon-o-paper-airplane')
                     ->color('info')
-                    ->visible(fn (Payment $record): bool => in_array($record->status, ['Diverifikasi', 'Menunggu Verifikasi']))
+                    ->visible(fn (Payment $record): bool => in_array($record->status, ['Transaksi Sukses', 'Menunggu Verifikasi']))
                     ->action(function (Payment $record) {
                         $oldValues = $record->toArray();
                         $record->update([

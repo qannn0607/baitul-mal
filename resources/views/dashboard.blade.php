@@ -2,7 +2,7 @@
     $setting = \App\Models\Setting::first();
     $user = Auth::user();
     $payments = $user->payments()->latest()->get();
-    $totalAmount = $payments->whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])->sum('amount');
+    $totalAmount = $payments->whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])->sum('amount');
     $lastPayment = $payments->first();
 ?>
 
@@ -41,7 +41,7 @@
             <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-1">
                 <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Total Tuntas Zakat</span>
                 <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">Rp {{ number_format($totalAmount, 0, ',', '.') }}</h3>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Telah diverifikasi & tersalurkan</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Transaksi sukses & tersalurkan</p>
             </div>
 
             <!-- Card 2: Status Terakhir -->
@@ -51,7 +51,7 @@
                     <div>
                         <span class="px-2.5 py-0.5 rounded text-[11px] font-bold inline-block
                             {{ $lastPayment->status === 'Sudah Disalurkan' ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : '' }}
-                            {{ $lastPayment->status === 'Diverifikasi' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
+                            {{ $lastPayment->status === 'Transaksi Sukses' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
                             {{ $lastPayment->status === 'Menunggu Verifikasi' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
                             {{ $lastPayment->status === 'Ditolak' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : '' }}
                         ">
@@ -119,7 +119,7 @@
                                     <td class="py-3">
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold
                                             {{ $pay->status === 'Sudah Disalurkan' ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : '' }}
-                                            {{ $pay->status === 'Diverifikasi' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
+                                            {{ $pay->status === 'Transaksi Sukses' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
                                             {{ $pay->status === 'Menunggu Verifikasi' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
                                             {{ $pay->status === 'Ditolak' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : '' }}
                                         ">
@@ -127,7 +127,7 @@
                                         </span>
                                     </td>
                                     <td class="py-3 text-right">
-                                        @if(in_array($pay->status, ['Diverifikasi', 'Sudah Disalurkan']))
+                                        @if(in_array($pay->status, ['Transaksi Sukses', 'Sudah Disalurkan']))
                                             <a href="{{ route('zakat.receipt', $pay->id) }}" target="_blank" class="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold rounded hover:bg-emerald-100 transition-colors">
                                                 Unduh PDF
                                             </a>

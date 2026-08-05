@@ -46,7 +46,7 @@ class PaymentCallbackController extends Controller
 
         if (in_array($transactionStatus, ['capture', 'settlement'])) {
             $payment->update([
-                'status' => 'Diverifikasi',
+                'status' => 'Transaksi Sukses',
                 'verified_at' => now(),
             ]);
 

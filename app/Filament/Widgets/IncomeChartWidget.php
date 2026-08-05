@@ -20,7 +20,7 @@ class IncomeChartWidget extends ChartWidget
             $date = Carbon::now()->subMonths($i);
             $months->push($date->translatedFormat('M Y'));
 
-            $total = Payment::whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])
+            $total = Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');

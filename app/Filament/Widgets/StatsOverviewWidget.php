@@ -11,14 +11,14 @@ class StatsOverviewWidget extends BaseWidget
 {
     protected function getStats(): array
     {
-        $totalVerifiedAmount = Payment::whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])->sum('amount');
+        $totalVerifiedAmount = Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])->sum('amount');
         $pendingCount = Payment::where('status', 'Menunggu Verifikasi')->count();
         $distributedCount = Payment::where('status', 'Sudah Disalurkan')->count();
         $totalMuzakki = User::where('role', 'user')->count();
 
         return [
             Stat::make('Total Zakat Terkumpul', 'Rp ' . number_format($totalVerifiedAmount, 0, ',', '.'))
-                ->description('Dari zakat diverifikasi & disalurkan')
+                ->description('Dari transaksi sukses & disalurkan')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
 

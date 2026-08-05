@@ -73,8 +73,8 @@
                 <button @click="statusFilter = 'Menunggu Verifikasi'" :class="statusFilter === 'Menunggu Verifikasi' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
                     Menunggu
                 </button>
-                <button @click="statusFilter = 'Diverifikasi'" :class="statusFilter === 'Diverifikasi' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
-                    Diverifikasi
+                <button @click="statusFilter = 'Transaksi Sukses'" :class="statusFilter === 'Transaksi Sukses' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                    Sukses
                 </button>
                 <button @click="statusFilter = 'Sudah Disalurkan'" :class="statusFilter === 'Sudah Disalurkan' ? 'bg-sky-600 text-white' : 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
                     Disalurkan
@@ -131,7 +131,7 @@
                                         <div class="space-y-0.5">
                                             <span class="px-2 py-0.5 rounded text-[10px] font-bold inline-block
                                                 {{ $pay->status === 'Sudah Disalurkan' ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : '' }}
-                                                {{ $pay->status === 'Diverifikasi' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
+                                                {{ $pay->status === 'Transaksi Sukses' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
                                                 {{ $pay->status === 'Menunggu Verifikasi' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
                                                 {{ $pay->status === 'Ditolak' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : '' }}
                                             ">
@@ -144,7 +144,7 @@
                                     </td>
 
                                     <td class="py-3 text-right">
-                                        @if(in_array($pay->status, ['Diverifikasi', 'Sudah Disalurkan']))
+                                        @if(in_array($pay->status, ['Transaksi Sukses', 'Sudah Disalurkan']))
                                             <a href="{{ route('zakat.receipt', $pay->id) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-xs inline-flex items-center gap-1 transition-colors">
                                                 Cetak PDF
                                             </a>

@@ -79,7 +79,7 @@ class ZakatTest extends TestCase
             'title' => 'Zakat Maal',
             'amount' => 500000,
             'proof_image' => 'payment_proofs/sample.png',
-            'status' => 'Diverifikasi',
+            'status' => 'Transaksi Sukses',
         ]);
 
         $response = $this->actingAs($user)->get('/riwayat-pembayaran');
@@ -99,7 +99,7 @@ class ZakatTest extends TestCase
             'title' => 'Zakat Maal',
             'amount' => 1000000,
             'proof_image' => 'payment_proofs/sample.png',
-            'status' => 'Diverifikasi',
+            'status' => 'Transaksi Sukses',
         ]);
 
         $response = $this->actingAs($user)->get(route('zakat.receipt', $payment));

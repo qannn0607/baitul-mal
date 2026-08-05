@@ -16,7 +16,7 @@ class ZakatTypeChartWidget extends ChartWidget
         $counts = [];
 
         foreach ($types as $type) {
-            $counts[] = Payment::whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])
+            $counts[] = Payment::whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])
                 ->where('title', 'like', '%' . $type . '%')
                 ->sum('amount');
         }

@@ -62,7 +62,7 @@ class PaymentResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options([
                         'Menunggu Verifikasi' => '🟡 Menunggu Verifikasi',
-                        'Diverifikasi' => '🟢 Diverifikasi',
+                        'Transaksi Sukses' => '🟢 Transaksi Sukses',
                         'Sudah Disalurkan' => '🔵 Sudah Disalurkan',
                         'Ditolak' => '🔴 Ditolak',
                     ])
@@ -121,7 +121,7 @@ class PaymentResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Menunggu Verifikasi' => 'warning',
-                        'Diverifikasi' => 'success',
+                        'Transaksi Sukses' => 'success',
                         'Sudah Disalurkan' => 'info',
                         'Ditolak' => 'danger',
                         default => 'gray',
@@ -133,7 +133,7 @@ class PaymentResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'Menunggu Verifikasi' => 'Menunggu Verifikasi',
-                        'Diverifikasi' => 'Diverifikasi',
+                        'Transaksi Sukses' => 'Transaksi Sukses',
                         'Sudah Disalurkan' => 'Sudah Disalurkan',
                         'Ditolak' => 'Ditolak',
                     ])
@@ -149,7 +149,7 @@ class PaymentResource extends Resource
                     ->action(function (Payment $record) {
                         $oldValues = $record->toArray();
                         $record->update([
-                            'status' => 'Diverifikasi',
+                            'status' => 'Transaksi Sukses',
                             'verified_by' => Auth::id(),
                             'verified_at' => now(),
                         ]);
@@ -197,7 +197,7 @@ class PaymentResource extends Resource
                     ->label('Disalurkan')
                     ->icon('heroicon-o-paper-airplane')
                     ->color('info')
-                    ->visible(fn (Payment $record): bool => in_array($record->status, ['Diverifikasi', 'Menunggu Verifikasi']))
+                    ->visible(fn (Payment $record): bool => in_array($record->status, ['Transaksi Sukses', 'Menunggu Verifikasi']))
                     ->action(function (Payment $record) {
                         $oldValues = $record->toArray();
                         $record->update([

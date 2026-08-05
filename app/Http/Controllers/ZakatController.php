@@ -18,7 +18,7 @@ class ZakatController extends Controller
         $user = Auth::user();
 
         $totalPaid = Payment::where('user_id', $user->id)
-            ->whereIn('status', ['Diverifikasi', 'Sudah Disalurkan'])
+            ->whereIn('status', ['Transaksi Sukses', 'Sudah Disalurkan'])
             ->sum('amount');
 
         $pendingCount = Payment::where('user_id', $user->id)
@@ -26,7 +26,7 @@ class ZakatController extends Controller
             ->count();
 
         $verifiedCount = Payment::where('user_id', $user->id)
-            ->where('status', 'Diverifikasi')
+            ->where('status', 'Transaksi Sukses')
             ->count();
 
         $distributedCount = Payment::where('user_id', $user->id)
@@ -150,7 +150,7 @@ class ZakatController extends Controller
 
         $query = Payment::where('user_id', $user->id);
 
-        if ($statusFilter && in_array($statusFilter, ['Menunggu Verifikasi', 'Diverifikasi', 'Sudah Disalurkan', 'Ditolak'])) {
+        if ($statusFilter && in_array($statusFilter, ['Menunggu Verifikasi', 'Transaksi Sukses', 'Sudah Disalurkan', 'Ditolak'])) {
             $query->where('status', $statusFilter);
         }
 

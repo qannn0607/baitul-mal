@@ -112,10 +112,10 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Zakat Maal',
                 'amount' => 1500000,
                 'proof_image' => 'payment_proofs/sample.png',
-                'status' => 'Diverifikasi',
+                'status' => 'Transaksi Sukses',
                 'verified_by' => $petugas->id,
                 'verified_at' => now()->subDays(1),
-                'notes' => 'Diverifikasi oleh petugas.',
+                'notes' => 'Transaksi sukses diverifikasi oleh petugas.',
             ]
         );
 

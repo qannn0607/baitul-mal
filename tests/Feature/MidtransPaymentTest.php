@@ -62,12 +62,12 @@ class MidtransPaymentTest extends TestCase
         $response->assertJson([
             'status' => 'success',
             'payment_id' => $payment->id,
-            'payment_status' => 'Diverifikasi',
+            'payment_status' => 'Transaksi Sukses',
         ]);
 
         $this->assertDatabaseHas('payments', [
             'id' => $payment->id,
-            'status' => 'Diverifikasi',
+            'status' => 'Transaksi Sukses',
         ]);
     }
 }
