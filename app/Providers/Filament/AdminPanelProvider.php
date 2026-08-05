@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Baitul Maal Panel Admin')
             ->brandLogo(fn () => asset('storage/baitul_mal.jpg'))
             ->brandLogoHeight('2.5rem')
+            ->favicon(fn () => asset('storage/baitul_mal.jpg'))
             ->colors([
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,

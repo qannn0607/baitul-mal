@@ -7,6 +7,11 @@
 
     <title>{{ config('app.name', 'Baitul Maal') }} - Portal Zakat</title>
     
+    <!-- Favicon & Icon -->
+    <link rel="icon" type="image/jpeg" href="{{ asset('storage/baitul_mal.jpg') }}">
+    <link rel="shortcut icon" type="image/jpeg" href="{{ asset('storage/baitul_mal.jpg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('storage/baitul_mal.jpg') }}">
+
     <!-- PWA Web Manifest & Theme -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#059669">

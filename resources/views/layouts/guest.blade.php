@@ -7,6 +7,11 @@
 
         <title>{{ config('app.name', 'Baitul Maal') }} - Autentikasi Zakat</title>
 
+        <!-- Favicon & Icon -->
+        <link rel="icon" type="image/jpeg" href="{{ asset('storage/baitul_mal.jpg') }}">
+        <link rel="shortcut icon" type="image/jpeg" href="{{ asset('storage/baitul_mal.jpg') }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/baitul_mal.jpg') }}">
+
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#059669">
 
