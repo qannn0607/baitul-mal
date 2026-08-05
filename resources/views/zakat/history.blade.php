@@ -27,7 +27,21 @@
                  if (window.snap && token) {
                      window.snap.pay(token, {
                          onSuccess: function(result) {
-                             window.location.href = '{{ route('zakat.history') }}';
+                             fetch('/api/midtrans/notification', {
+                                 method: 'POST',
+                                 headers: {
+                                     'Content-Type': 'application/json',
+                                     'Accept': 'application/json',
+                                 },
+                                 body: JSON.stringify({
+                                     order_id: result.order_id,
+                                     status_code: result.status_code || '200',
+                                     gross_amount: result.gross_amount,
+                                     transaction_status: 'settlement'
+                                 })
+                             }).finally(function() {
+                                 window.location.href = '{{ route('zakat.history') }}';
+                             });
                          },
                          onPending: function(result) {
                              window.location.href = '{{ route('zakat.history') }}';
