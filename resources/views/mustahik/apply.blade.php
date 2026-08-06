@@ -30,7 +30,20 @@
                     </div>
                 @endif
 
-                <form action="{{ route('mustahik.apply.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <form action="{{ route('mustahik.apply.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{
+                        amountRequestedDisplay: '{{ old('amount_requested') ? number_format(old('amount_requested'), 0, ',', '.') : '' }}',
+                        amountRequested: '{{ old('amount_requested', '') }}',
+                        formatAmount(value) {
+                            const number = value.replace(/[^0-9]/g, '');
+                            this.amountRequested = number;
+                            this.amountRequestedDisplay = number ? parseInt(number).toLocaleString('id-ID') : '';
+                        },
+                        submitForm() {
+                            if (this.$refs.amountRequestedInput) {
+                                this.$refs.amountRequestedInput.value = this.amountRequested;
+                            }
+                        }
+                    }" @submit="submitForm" novalidate>
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,7 +103,8 @@
                             <label class="block text-sm font-bold text-slate-700 mb-2">Nominal Pengajuan Bantuan (Rp) <span class="text-rose-500">*</span></label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-sm font-bold text-slate-500">Rp</span>
-                                <input type="number" name="amount_requested" value="{{ old('amount_requested') }}" min="10000" step="1000" required class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium" placeholder="Contoh: 500000">
+                                <input type="text" x-model="amountRequestedDisplay" @input="formatAmount($event.target.value)" placeholder="Contoh: 500.000" class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium">
+                                <input type="hidden" name="amount_requested" x-ref="amountRequestedInput" :value="amountRequested">
                             </div>
                         </div>
                     </div>
