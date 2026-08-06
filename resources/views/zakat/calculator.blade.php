@@ -237,7 +237,7 @@
 
                 <!-- PAY CTA BUTTON -->
                 <div class="pt-2">
-                    <a :href="'/zakat/pay?title=' + encodeURIComponent(finalZakatTitle) + '&amount=' + finalZakatAmount" 
+                    <a :href="'{{ route('zakat.pay') }}?title=' + encodeURIComponent(finalZakatTitle) + '&amount=' + finalZakatAmount" 
                        class="w-full inline-flex items-center justify-center px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-xs transition-colors text-center">
                         Bayar Zakat Sekarang
                     </a>
